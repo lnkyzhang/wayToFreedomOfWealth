@@ -1,0 +1,688 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="ec5df6c0-c5c4-4284-ad96-435ec414108d" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="JupyterTrust" id="34071107-29fe-4676-8f3a-39714a584c38" />
+  <component name="ProjectId" id="1T3OUaFOEESkyrSnqJowIOYDyJb" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../DevilYuan" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PythonContentEntriesConfigurable" />
+  </component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <console-settings module-name="back_forecast" is-module-sdk="true">
+        <option name="myUseModuleSdk" value="true" />
+        <option name="myModuleName" value="back_forecast" />
+      </console-settings>
+    </option>
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\script\back_forecast\learn_quant" />
+      <recent name="D:\script\back_forecast\learn_quant\MACD" />
+      <recent name="D:\script\back_forecast\EGRO" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\script\back_forecast\learn_quant" />
+      <recent name="D:\script\back_forecast\learn_quant\test_rqalpha" />
+      <recent name="D:\script\back_forecast\learn_quant\MACD" />
+      <recent name="D:\script\back_forecast" />
+      <recent name="D:\script\back_forecast\backTest" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.MT_func">
+    <configuration name="MT_func" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="back_forecast" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/learn_quant" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/learn_quant/MT_func.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="MT_get_data" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="back_forecast" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/learn_quant" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/learn_quant/MT_get_data.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Test_api" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="back_forecast" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/learn_quant/test_rqalpha" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/learn_quant/test_rqalpha/Test_api.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test-qa" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="back_forecast" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/learn_quant" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/learn_quant/test-qa.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test_risk" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="back_forecast" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/learn_quant" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/learn_quant/test_risk.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.test-qa" />
+      <item itemvalue="Python.test_risk" />
+      <item itemvalue="Python.Test_api" />
+      <item itemvalue="Python.MT_func" />
+      <item itemvalue="Python.MT_get_data" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.MT_func" />
+        <item itemvalue="Python.MT_get_data" />
+        <item itemvalue="Python.test-qa" />
+        <item itemvalue="Python.test_risk" />
+        <item itemvalue="Python.Test_api" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ec5df6c0-c5c4-4284-ad96-435ec414108d" name="Default Changelist" comment="" />
+      <created>1572685328848</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1572685328848</updated>
+      <workItem from="1572685344956" duration="17289000" />
+      <workItem from="1572739561907" duration="608000" />
+      <workItem from="1572823357196" duration="5000" />
+      <workItem from="1572869509468" duration="1822000" />
+      <workItem from="1572871916009" duration="85000" />
+      <workItem from="1572872316951" duration="81000" />
+      <workItem from="1572952594000" duration="3309000" />
+      <workItem from="1573168566955" duration="725000" />
+      <workItem from="1573283177892" duration="19246000" />
+      <workItem from="1573381004428" duration="155000" />
+      <workItem from="1573381172126" duration="3986000" />
+      <workItem from="1573558037835" duration="3885000" />
+      <workItem from="1573687111451" duration="775000" />
+      <workItem from="1574165274054" duration="3405000" />
+      <workItem from="1574205608354" duration="1434000" />
+      <workItem from="1574251372008" duration="3349000" />
+      <workItem from="1574290959752" duration="2184000" />
+      <workItem from="1574334001667" duration="3677000" />
+      <workItem from="1574481374930" duration="25596000" />
+      <workItem from="1574571652211" duration="6101000" />
+      <workItem from="1574636125498" duration="942000" />
+      <workItem from="1574685334544" duration="228000" />
+      <workItem from="1574721098845" duration="3997000" />
+      <workItem from="1574766198507" duration="955000" />
+      <workItem from="1574807559345" duration="3570000" />
+      <workItem from="1574894010519" duration="3487000" />
+      <workItem from="1574982858218" duration="974000" />
+      <workItem from="1575110584615" duration="13651000" />
+      <workItem from="1575158481086" duration="18259000" />
+      <workItem from="1575239781148" duration="3130000" />
+      <workItem from="1575326050349" duration="3898000" />
+      <workItem from="1575413370473" duration="1285000" />
+      <workItem from="1575499014050" duration="860000" />
+      <workItem from="1576018289672" duration="1114000" />
+      <workItem from="1576104327391" duration="1516000" />
+      <workItem from="1576317405396" duration="1677000" />
+      <workItem from="1576320574819" duration="1158000" />
+      <workItem from="1576374560618" duration="7540000" />
+      <workItem from="1576536909603" duration="2134000" />
+      <workItem from="1576622117793" duration="3416000" />
+      <workItem from="1576893552926" duration="6339000" />
+      <workItem from="1576978003805" duration="630000" />
+      <workItem from="1576985304467" duration="1120000" />
+      <workItem from="1577143317135" duration="396000" />
+      <workItem from="1577496579815" duration="5738000" />
+      <workItem from="1577586218680" duration="4458000" />
+      <workItem from="1577713527006" duration="2695000" />
+      <workItem from="1577840572359" duration="3550000" />
+      <workItem from="1577969029751" duration="319000" />
+      <workItem from="1578103231498" duration="971000" />
+      <workItem from="1578104364139" duration="540000" />
+      <workItem from="1578104938461" duration="892000" />
+      <workItem from="1578105987245" duration="13000" />
+      <workItem from="1578143044861" duration="3624000" />
+      <workItem from="1578195157410" duration="4532000" />
+      <workItem from="1578402835872" duration="1799000" />
+      <workItem from="1578487160907" duration="4172000" />
+      <workItem from="1578583301662" duration="614000" />
+      <workItem from="1578718578084" duration="2030000" />
+      <workItem from="1578722441247" duration="1050000" />
+      <workItem from="1578796292491" duration="608000" />
+      <workItem from="1578996012186" duration="2402000" />
+      <workItem from="1579092006868" duration="728000" />
+      <workItem from="1579178473025" duration="1292000" />
+      <workItem from="1579258696265" duration="3064000" />
+      <workItem from="1579267801615" duration="2215000" />
+      <workItem from="1579528447437" duration="7000" />
+      <workItem from="1580092545613" duration="7299000" />
+      <workItem from="1580170738563" duration="14180000" />
+      <workItem from="1580204920665" duration="14855000" />
+      <workItem from="1580258037606" duration="16535000" />
+      <workItem from="1580344881575" duration="2605000" />
+      <workItem from="1580347512824" duration="20679000" />
+      <workItem from="1580436174287" duration="28519000" />
+      <workItem from="1580524166374" duration="2212000" />
+      <workItem from="1580547312030" duration="6474000" />
+      <workItem from="1580655759913" duration="724000" />
+      <workItem from="1580727092891" duration="9307000" />
+      <workItem from="1580776154466" duration="9511000" />
+      <workItem from="1580796513966" duration="18075000" />
+      <workItem from="1580863896290" duration="17492000" />
+      <workItem from="1580950308065" duration="24869000" />
+      <workItem from="1581038166311" duration="36668000" />
+      <workItem from="1581210963637" duration="25884000" />
+      <workItem from="1581256310059" duration="2522000" />
+      <workItem from="1581296987735" duration="21080000" />
+      <workItem from="1581328353084" duration="601000" />
+      <workItem from="1581392146022" duration="1545000" />
+      <workItem from="1581412001419" duration="3989000" />
+      <workItem from="1581423634556" duration="8804000" />
+      <workItem from="1581495114235" duration="2682000" />
+      <workItem from="1581570266971" duration="2358000" />
+      <workItem from="1581660144016" duration="2589000" />
+      <workItem from="1581729299972" duration="4683000" />
+      <workItem from="1581755599704" duration="3058000" />
+      <workItem from="1581819396223" duration="9689000" />
+      <workItem from="1581840845721" duration="6383000" />
+      <workItem from="1581905247739" duration="4589000" />
+      <workItem from="1581928756034" duration="1251000" />
+      <workItem from="1581986764305" duration="13027000" />
+      <workItem from="1582031070018" duration="2112000" />
+      <workItem from="1582077425800" duration="3969000" />
+      <workItem from="1582095871240" duration="763000" />
+      <workItem from="1582097369696" duration="2873000" />
+      <workItem from="1582172617884" duration="1195000" />
+      <workItem from="1582207786079" duration="40000" />
+      <workItem from="1582207895800" duration="50000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="727" y="252" key="#Docker" timestamp="1576104364644">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="727" y="252" key="#Docker/0.0.1920.1040@0.0.1920.1040" timestamp="1576104364644" />
+    <state x="734" y="355" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1581427110416">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="734" y="353" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.2560.1392/2560.0.1280.680@0.0.2560.1392" timestamp="1581253981270" />
+    <state x="734" y="355" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.2560.1400/2560.0.1280.680@0.0.2560.1400" timestamp="1581427110416" />
+    <state x="1013" y="502" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1581061851539">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="1013" y="502" key="#com.intellij.fileTypes.FileTypeChooser/0.0.2560.1400/2560.0.1280.680@0.0.2560.1400" timestamp="1581061851539" />
+    <state x="385" y="176" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog" timestamp="1582207916531">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="385" y="176" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog/0.0.1280.680@0.0.1280.680" timestamp="1582207916531" />
+    <state width="2043" height="628" key="DebuggerActiveHint" timestamp="1581848422686">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2043" height="628" key="DebuggerActiveHint/0.0.2560.1400/2560.0.1280.680@0.0.2560.1400" timestamp="1581848422686" />
+    <state width="1287" height="466" key="DebuggerActiveHint/1920.0.1280.693/0.0.1920.1040@0.0.1920.1040" timestamp="1578144838366" />
+    <state x="494" y="163" key="FileChooserDialogImpl" timestamp="1582207815030">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="494" y="163" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1582207815030" />
+    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1280.680@0.0.1920.1040" timestamp="1576988030576" />
+    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1576018810035" />
+    <state x="987" y="370" key="FileChooserDialogImpl/0.0.2560.1400/2560.0.1280.680@0.0.2560.1400" timestamp="1582173029812" />
+    <state x="3054" y="180" key="FileChooserDialogImpl/0.0.2560.1400/2560.0.1280.680@2560.0.1280.680" timestamp="1582097393783" />
+    <state x="740" y="275" key="FileChooserDialogImpl/1920.0.1280.693/0.0.1920.1040@0.0.1920.1040" timestamp="1579179620446" />
+    <state x="987" y="370" key="FileChooserDialogImpl/2560.0.1280.693/0.0.2560.1400@0.0.2560.1400" timestamp="1578103453893" />
+    <state width="1237" height="233" key="GridCell.Tab.0.bottom" timestamp="1582101626413">
+      <screen x="2560" y="0" width="1280" height="680" />
+    </state>
+    <state width="1877" height="324" key="GridCell.Tab.0.bottom/0.0.1707.933@0.0.1707.933" timestamp="1579263251219" />
+    <state width="1877" height="332" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1280.680@0.0.1920.1040" timestamp="1580559995950" />
+    <state width="1877" height="216" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1577516000728" />
+    <state width="2517" height="446" key="GridCell.Tab.0.bottom/0.0.2560.1392/2560.0.1280.680@0.0.2560.1392" timestamp="1581258834120" />
+    <state width="2517" height="556" key="GridCell.Tab.0.bottom/0.0.2560.1400/2560.0.1280.680@0.0.2560.1400" timestamp="1581928292856" />
+    <state width="1237" height="233" key="GridCell.Tab.0.bottom/0.0.2560.1400/2560.0.1280.680@2560.0.1280.680" timestamp="1582101626413" />
+    <state width="2517" height="458" key="GridCell.Tab.0.bottom/1920.0.1280.693/0.0.1920.1040@0.0.1920.1040" timestamp="1580301000286" />
+    <state width="1237" height="233" key="GridCell.Tab.0.center" timestamp="1582101626413">
+      <screen x="2560" y="0" width="1280" height="680" />
+    </state>
+    <state width="1877" height="324" key="GridCell.Tab.0.center/0.0.1707.933@0.0.1707.933" timestamp="1579263251215" />
+    <state width="1877" height="332" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1280.680@0.0.1920.1040" timestamp="1580559995950" />
+    <state width="1877" height="216" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1577516000727" />
+    <state width="2517" height="446" key="GridCell.Tab.0.center/0.0.2560.1392/2560.0.1280.680@0.0.2560.1392" timestamp="1581258834120" />
+    <state width="2517" height="556" key="GridCell.Tab.0.center/0.0.2560.1400/2560.0.1280.680@0.0.2560.1400" timestamp="1581928292855" />
+    <state width="1237" height="233" key="GridCell.Tab.0.center/0.0.2560.1400/2560.0.1280.680@2560.0.1280.680" timestamp="1582101626413" />
+    <state width="2517" height="458" key="GridCell.Tab.0.center/1920.0.1280.693/0.0.1920.1040@0.0.1920.1040" timestamp="1580301000285" />
+    <state width="1237" height="233" key="GridCell.Tab.0.left" timestamp="1582101626412">
+      <screen x="2560" y="0" width="1280" height="680" />
+    </state>
+    <state width="1877" height="324" key="GridCell.Tab.0.left/0.0.1707.933@0.0.1707.933" timestamp="1579263251212" />
+    <state width="1877" height="332" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1280.680@0.0.1920.1040" timestamp="1580559995950" />
+    <state width="1877" height="216" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1577516000727" />
+    <state width="2517" height="446" key="GridCell.Tab.0.left/0.0.2560.1392/2560.0.1280.680@0.0.2560.1392" timestamp="1581258834120" />
+    <state width="2517" height="556" key="GridCell.Tab.0.left/0.0.2560.1400/2560.0.1280.680@0.0.2560.1400" timestamp="1581928292855" />
+    <state width="1237" height="233" key="GridCell.Tab.0.left/0.0.2560.1400/2560.0.1280.680@2560.0.1280.680" timestamp="1582101626412" />
+    <state width="2517" height="458" key="GridCell.Tab.0.left/1920.0.1280.693/0.0.1920.1040@0.0.1920.1040" timestamp="1580301000284" />
+    <state width="1237" height="233" key="GridCell.Tab.0.right" timestamp="1582101626413">
+      <screen x="2560" y="0" width="1280" height="680" />
+    </state>
+    <state width="1877" height="324" key="GridCell.Tab.0.right/0.0.1707.933@0.0.1707.933" timestamp="1579263251216" />
+    <state width="1877" height="332" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1280.680@0.0.1920.1040" timestamp="1580559995950" />
+    <state width="1877" height="216" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1577516000727" />
+    <state width="2517" height="446" key="GridCell.Tab.0.right/0.0.2560.1392/2560.0.1280.680@0.0.2560.1392" timestamp="1581258834120" />
+    <state width="2517" height="556" key="GridCell.Tab.0.right/0.0.2560.1400/2560.0.1280.680@0.0.2560.1400" timestamp="1581928292855" />
+    <state width="1237" height="233" key="GridCell.Tab.0.right/0.0.2560.1400/2560.0.1280.680@2560.0.1280.680" timestamp="1582101626413" />
+    <state width="2517" height="458" key="GridCell.Tab.0.right/1920.0.1280.693/0.0.1920.1040@0.0.1920.1040" timestamp="1580301000285" />
+    <state width="2517" height="368" key="GridCell.Tab.1.bottom" timestamp="1581867985848">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="1877" height="324" key="GridCell.Tab.1.bottom/0.0.1707.933@0.0.1707.933" timestamp="1579263251226" />
+    <state width="1877" height="348" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1577496828363" />
+    <state width="2517" height="455" key="GridCell.Tab.1.bottom/0.0.2560.1392/2560.0.1280.680@0.0.2560.1392" timestamp="1581255981911" />
+    <state width="2517" height="368" key="GridCell.Tab.1.bottom/0.0.2560.1400/2560.0.1280.680@0.0.2560.1400" timestamp="1581867985848" />
+    <state width="2517" height="458" key="GridCell.Tab.1.bottom/1920.0.1280.693/0.0.1920.1040@0.0.1920.1040" timestamp="1580301000288" />
+    <state width="2517" height="368" key="GridCell.Tab.1.center" timestamp="1581867985848">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="1877" height="324" key="GridCell.Tab.1.center/0.0.1707.933@0.0.1707.933" timestamp="1579263251223" />
+    <state width="1877" height="348" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1577496828363" />
+    <state width="2517" height="455" key="GridCell.Tab.1.center/0.0.2560.1392/2560.0.1280.680@0.0.2560.1392" timestamp="1581255981911" />
+    <state width="2517" height="368" key="GridCell.Tab.1.center/0.0.2560.1400/2560.0.1280.680@0.0.2560.1400" timestamp="1581867985848" />
+    <state width="2517" height="458" key="GridCell.Tab.1.center/1920.0.1280.693/0.0.1920.1040@0.0.1920.1040" timestamp="1580301000287" />
+    <state width="2517" height="368" key="GridCell.Tab.1.left" timestamp="1581867985848">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="1877" height="324" key="GridCell.Tab.1.left/0.0.1707.933@0.0.1707.933" timestamp="1579263251222" />
+    <state width="1877" height="348" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1577496828363" />
+    <state width="2517" height="455" key="GridCell.Tab.1.left/0.0.2560.1392/2560.0.1280.680@0.0.2560.1392" timestamp="1581255981911" />
+    <state width="2517" height="368" key="GridCell.Tab.1.left/0.0.2560.1400/2560.0.1280.680@0.0.2560.1400" timestamp="1581867985848" />
+    <state width="2517" height="458" key="GridCell.Tab.1.left/1920.0.1280.693/0.0.1920.1040@0.0.1920.1040" timestamp="1580301000287" />
+    <state width="2517" height="368" key="GridCell.Tab.1.right" timestamp="1581867985848">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="1877" height="324" key="GridCell.Tab.1.right/0.0.1707.933@0.0.1707.933" timestamp="1579263251225" />
+    <state width="1877" height="348" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1577496828363" />
+    <state width="2517" height="455" key="GridCell.Tab.1.right/0.0.2560.1392/2560.0.1280.680@0.0.2560.1392" timestamp="1581255981911" />
+    <state width="2517" height="368" key="GridCell.Tab.1.right/0.0.2560.1400/2560.0.1280.680@0.0.2560.1400" timestamp="1581867985848" />
+    <state width="2517" height="458" key="GridCell.Tab.1.right/1920.0.1280.693/0.0.1920.1040@0.0.1920.1040" timestamp="1580301000288" />
+    <state x="308" y="0" width="914" height="680" key="SettingsEditor" timestamp="1582207906673">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="308" y="0" width="914" height="680" key="SettingsEditor/0.0.1280.680@0.0.1280.680" timestamp="1582207906673" />
+    <state x="461" y="170" width="998" height="708" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1577496955372" />
+    <state x="615" y="229" key="SettingsEditor/0.0.2560.1400/2560.0.1280.680@0.0.2560.1400" timestamp="1582116882920" />
+    <state x="461" y="170" key="SettingsEditor/1920.0.1280.693/0.0.1920.1040@0.0.1920.1040" timestamp="1576380650813" />
+    <state width="1288" height="708" key="XDebugger.FullValuePopup" timestamp="1581314652804">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="1288" height="704" key="XDebugger.FullValuePopup/0.0.2560.1392/2560.0.1280.680@0.0.2560.1392" timestamp="1581241860235" />
+    <state width="1288" height="708" key="XDebugger.FullValuePopup/0.0.2560.1400/2560.0.1280.680@0.0.2560.1400" timestamp="1581314652804" />
+    <state x="824" y="436" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1580365070176">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="824" y="436" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.2560.1400/2560.0.1280.680@0.0.2560.1400" timestamp="1580365070176" />
+    <state x="-7" y="0" width="1293" height="733" key="dock-window-1" timestamp="1581496415788">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="-7" y="0" width="1293" height="733" key="dock-window-1/0.0.2560.1400/2560.0.1280.680@0.0.2560.1400" timestamp="1581496415788" />
+    <state x="848" y="347" width="863" height="706" key="find.popup" timestamp="1581500597225">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="848" y="347" width="863" height="706" key="find.popup/0.0.2560.1400/2560.0.1280.680@0.0.2560.1400" timestamp="1581500597225" />
+    <state x="636" y="258" width="647" height="524" key="find.popup/1920.0.1280.693/0.0.1920.1040@0.0.1920.1040" timestamp="1580128667980" />
+    <state x="943" y="315" width="672" height="678" key="search.everywhere.popup" timestamp="1581053398941">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="943" y="315" width="672" height="678" key="search.everywhere.popup/0.0.2560.1400/2560.0.1280.680@0.0.2560.1400" timestamp="1581053398941" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/learn_quant/MACD/MACD.py</url>
+          <line>296</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/learn_quant/MACD/MACD.py</url>
+          <line>351</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/learn_quant/MACD/rqalpha_db.py</url>
+          <line>1</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/learn_quant/MACD/rqalpha_db.py</url>
+          <line>45</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/learn_quant/MACD/rqalpha_db.py</url>
+          <line>43</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../quantaxis/quantaxis/config/update_x.py</url>
+          <line>48</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../quantaxis/quantaxis/QUANTAXIS/QASU/save_tdx.py</url>
+          <line>679</line>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../quantaxis/quantaxis/QUANTAXIS/QASU/save_tdx.py</url>
+          <line>700</line>
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../quantaxis/quantaxis/QUANTAXIS/QAFetch/QATdx.py</url>
+          <line>381</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../quantaxis/quantaxis/QUANTAXIS/QAFetch/QATdx.py</url>
+          <line>406</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/learn_quant/MACD/MACD.py</url>
+          <line>273</line>
+          <option name="timeStamp" value="30" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/learn_quant/MACD/MACD.py</url>
+          <line>350</line>
+          <option name="timeStamp" value="32" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/learn_quant/MACD/jukuan_macd_signal.py</url>
+          <line>453</line>
+          <option name="timeStamp" value="36" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/learn_quant/MACD/jukuan_macd_signal.py</url>
+          <line>600</line>
+          <option name="timeStamp" value="37" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/learn_quant/MACD/jukuan_macd_signal.py</url>
+          <line>640</line>
+          <option name="timeStamp" value="38" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://C:/ProgramData/Anaconda3/Lib/site-packages/rqalpha/mod/rqalpha_mod_sys_simulation/simulation_event_source.py</url>
+          <line>174</line>
+          <option name="timeStamp" value="49" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://C:/ProgramData/Anaconda3/Lib/site-packages/rqalpha/mod/rqalpha_mod_sys_simulation/simulation_event_source.py</url>
+          <line>171</line>
+          <option name="timeStamp" value="50" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://C:/ProgramData/Anaconda3/Lib/site-packages/rqalpha/mod/rqalpha_mod_sys_simulation/simulation_event_source.py</url>
+          <line>169</line>
+          <option name="timeStamp" value="51" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://C:/ProgramData/Anaconda3/Lib/site-packages/rqalpha/data/data_proxy.py</url>
+          <line>210</line>
+          <option name="timeStamp" value="52" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/learn_quant/MACD/jukuan_macd_signal.py</url>
+          <line>447</line>
+          <option name="timeStamp" value="54" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/learn_quant/MACD/jukuan_macd_signal.py</url>
+          <line>433</line>
+          <option name="timeStamp" value="55" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/learn_quant/MACD/jukuan_macd_signal.py</url>
+          <line>866</line>
+          <option name="timeStamp" value="59" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/learn_quant/MACD/jukuan_macd_signal.py</url>
+          <line>905</line>
+          <option name="timeStamp" value="60" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/learn_quant/MT_func.py</url>
+          <line>522</line>
+          <option name="timeStamp" value="64" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/learn_quant/MACD/jukuan_macd_signal.py</url>
+          <line>887</line>
+          <option name="timeStamp" value="65" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/learn_quant/test_rqalpha/test_rqalpha.py</url>
+          <line>114</line>
+          <option name="timeStamp" value="77" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../quantaxis/quantaxis/QUANTAXIS/QAARP/QAAccountPro.py</url>
+          <line>1544</line>
+          <option name="timeStamp" value="79" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://C:/ProgramData/Anaconda3/Lib/site-packages/QAStrategy/qactabase.py</url>
+          <line>155</line>
+          <option name="timeStamp" value="89" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/learn_quant/test_rqalpha/test_rqalpha.py</url>
+          <line>75</line>
+          <option name="timeStamp" value="107" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://C:/ProgramData/Anaconda3/Lib/site-packages/QAStrategy/qastockbase.py</url>
+          <line>94</line>
+          <option name="timeStamp" value="109" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../quantaxis/quantaxis/QUANTAXIS/QAARP/QAAccountPro.py</url>
+          <line>1121</line>
+          <option name="timeStamp" value="112" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$USER_HOME$/AppData/Roaming/Python/Python37/site-packages/QUANTAXIS/QAARP/QARisk.py</url>
+          <line>180</line>
+          <option name="timeStamp" value="114" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$USER_HOME$/AppData/Roaming/Python/Python37/site-packages/QUANTAXIS/QAARP/QARisk.py</url>
+          <line>226</line>
+          <option name="timeStamp" value="117" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/learn_quant/MT_func.py</url>
+          <line>598</line>
+          <option name="timeStamp" value="119" />
+        </line-breakpoint>
+      </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="endict" />
+        <watch expression="x" />
+        <watch expression="e" />
+        <watch expression="positions['000333']" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/back_forecast$test_rqalpha000651.coverage" NAME="test_rqalpha000651 Coverage Results" MODIFIED="1581426919130" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant/test_rqalpha" />
+    <SUITE FILE_PATH="coverage/back_forecast$test_1.coverage" NAME="test_1 Coverage Results" MODIFIED="1573290332178" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/back_forecast$.coverage" NAME="多季度选股择时回测 Coverage Results" MODIFIED="1574166570749" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant/股票回测" />
+    <SUITE FILE_PATH="coverage/back_forecast$test000651.coverage" NAME="test000651 Coverage Results" MODIFIED="1581426149640" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant" />
+    <SUITE FILE_PATH="coverage/back_forecast$test_rqalpha.coverage" NAME="test_rqalpha Coverage Results" MODIFIED="1581432537884" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant/test_rqalpha" />
+    <SUITE FILE_PATH="coverage/back_forecast$test_qa.coverage" NAME="test-qa Coverage Results" MODIFIED="1581433226688" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant" />
+    <SUITE FILE_PATH="coverage/back_forecast$MT_func.coverage" NAME="MT_func Coverage Results" MODIFIED="1582101626391" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant" />
+    <SUITE FILE_PATH="coverage/back_forecast$DataProcess.coverage" NAME="DataProcess Coverage Results" MODIFIED="1573383161841" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/EGRO" />
+    <SUITE FILE_PATH="coverage/back_forecast$Test_macd.coverage" NAME="MACD Coverage Results" MODIFIED="1580868046587" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant/MACD" />
+    <SUITE FILE_PATH="coverage/back_forecast$test.coverage" NAME="test Coverage Results" MODIFIED="1581431129334" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant" />
+    <SUITE FILE_PATH="coverage/back_forecast$MACD_JCSC.coverage" NAME="MACD_JCSC Coverage Results" MODIFIED="1575173531289" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant/股票回测/超级简化版回测" />
+    <SUITE FILE_PATH="coverage/back_forecast$scipy.coverage" NAME="scipy Coverage Results" MODIFIED="1573560726236" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant" />
+    <SUITE FILE_PATH="coverage/back_forecast$MACD.coverage" NAME="MACD Coverage Results" MODIFIED="1581219016769" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant/MACD" />
+    <SUITE FILE_PATH="coverage/back_forecast$Test_api.coverage" NAME="Test_api Coverage Results" MODIFIED="1581432587586" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant/test_rqalpha" />
+    <SUITE FILE_PATH="coverage/back_forecast$DyMainWindow.coverage" NAME="DyMainWindow Coverage Results" MODIFIED="1577518646511" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../DevilYuan" />
+    <SUITE FILE_PATH="coverage/back_forecast$test_back_forecast.coverage" NAME="test_back_forecast Coverage Results" MODIFIED="1574166261730" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant" />
+    <SUITE FILE_PATH="coverage/back_forecast$backtest.coverage" NAME="backtest Coverage Results" MODIFIED="1574168572737" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant/股票回测/基于QAMARKET的回测" />
+    <SUITE FILE_PATH="coverage/back_forecast$Analyze.coverage" NAME="Analyze Coverage Results" MODIFIED="1581054305637" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant/MACD" />
+    <SUITE FILE_PATH="coverage/back_forecast$test_scipy_optimize.coverage" NAME="test_scipy_optimize Coverage Results" MODIFIED="1581309201457" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant" />
+    <SUITE FILE_PATH="coverage/back_forecast$verifyDate.coverage" NAME="verifyDate Coverage Results" MODIFIED="1573398847333" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/EGRO" />
+    <SUITE FILE_PATH="coverage/back_forecast$update_x.coverage" NAME="update_x Coverage Results" MODIFIED="1580878506947" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../quantaxis/quantaxis/config" />
+    <SUITE FILE_PATH="coverage/back_forecast$jukuan_macd_signal.coverage" NAME="jukuan_macd_signal Coverage Results" MODIFIED="1581074859425" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant/MACD" />
+    <SUITE FILE_PATH="coverage/back_forecast$qactabase.coverage" NAME="qactabase Coverage Results" MODIFIED="1581314807808" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="C:/ProgramData/Anaconda3/Lib/site-packages/QAStrategy" />
+    <SUITE FILE_PATH="coverage/back_forecast$MT_get_data.coverage" NAME="MT_get_data Coverage Results" MODIFIED="1581923189213" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant" />
+    <SUITE FILE_PATH="coverage/back_forecast$test_scipy.coverage" NAME="test_scipy Coverage Results" MODIFIED="1573564937103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant" />
+    <SUITE FILE_PATH="coverage/back_forecast$1.coverage" NAME="多因子选股1 Coverage Results" MODIFIED="1575200696495" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backTest" />
+    <SUITE FILE_PATH="coverage/back_forecast$test_security.coverage" NAME="test_security Coverage Results" MODIFIED="1580206304419" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant" />
+    <SUITE FILE_PATH="coverage/back_forecast$test_1__1_.coverage" NAME="test_1 (1) Coverage Results" MODIFIED="1573284246054" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/EGRO" />
+    <SUITE FILE_PATH="coverage/back_forecast$EGRO.coverage" NAME="EGRO Coverage Results" MODIFIED="1573383192079" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/EGRO" />
+    <SUITE FILE_PATH="coverage/back_forecast$simplebacktest.coverage" NAME="simplebacktest Coverage Results" MODIFIED="1574206093720" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant/股票回测/超级简化版回测" />
+    <SUITE FILE_PATH="coverage/back_forecast$test_back_forecast2.coverage" NAME="test_back_forecast2 Coverage Results" MODIFIED="1580548927322" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant" />
+    <SUITE FILE_PATH="coverage/back_forecast$test_risk.coverage" NAME="test_risk Coverage Results" MODIFIED="1581433157308" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/learn_quant" />
+  </component>
+</project>
