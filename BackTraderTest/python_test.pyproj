@@ -1,0 +1,68 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>5d4b4f96-b73b-4041-9dad-d372b1373b24</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>quickstart_old.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>python_test</Name>
+    <RootNamespace>python_test</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="analyzer-annualreturn.py" />
+    <Compile Include="beat_random_entry.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="bracket.py" />
+    <Compile Include="data-filler.py" />
+    <Compile Include="data-pandas.py" />
+    <Compile Include="make_tushar_data.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mult-values.py" />
+    <Compile Include="multidata-strategy-unaligned.py" />
+    <Compile Include="multidata-strategy.py" />
+    <Compile Include="optimization.py" />
+    <Compile Include="order-execution.py" />
+    <Compile Include="pinkfish-challenge.py" />
+    <Compile Include="python_test.py" />
+    <Compile Include="quickstart.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="quickstart_old.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="relativevolume.py" />
+    <Compile Include="scheduled-min.py" />
+    <Compile Include="scheduled.py" />
+    <Compile Include="tcal-intra.py" />
+    <Compile Include="tcal.py" />
+    <Compile Include="test.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="weekdaysaligner.py" />
+    <Compile Include="weekdaysfiller.py" />
+    <Compile Include="writer-test.py" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>
