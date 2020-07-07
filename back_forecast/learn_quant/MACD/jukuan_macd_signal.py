@@ -117,29 +117,29 @@ Plouto-Quants All Rights Reserved
 # environment = 'jukuan'
 
 
-environment = 'QA'
-import sys
-sys.path.append("..")
-
-if environment == 'jukuan':  # 设置回测环境-在聚宽上使用
-    # from kuanke.user_space_api import *  # 在自定义的类使用聚宽的接口，需要引入聚宽的API
-    from jukuan_macd_config import *  # 引入信号检测配置类。
-    from jukuan_db import JukuanDBBase  # 引入获取数据的类。
-
-    DB_BASE = JukuanDBBase  # 定义数据访问的实例。
-
-if environment == 'QA':  # 设置回测环境-在聚宽上使用
-    from jukuan_macd_config import *  # 引入信号检测配置类。
-    from jukuan_db import QADBBase  # 引入获取数据的类。
-
-    DB_BASE = QADBBase  # 定义数据访问的实例。
-
-
-if environment == 'Rqalpha':  # 设置回测环境-在聚宽上使用
-    from jukuan_macd_config import *  # 引入信号检测配置类。
-    from rqalpha_db import RqalphaDBBase  # 引入获取数据的类。
-
-    DB_BASE = RqalphaDBBase  # 定义数据访问的实例。
+# environment = 'jukuan'
+# import sys
+# sys.path.append("..")
+#
+# if environment == 'jukuan':  # 设置回测环境-在聚宽上使用
+#     # from kuanke.user_space_api import *  # 在自定义的类使用聚宽的接口，需要引入聚宽的API
+#     from jukuan_macd_config import *  # 引入信号检测配置类。
+#     from jukuan_db import JukuanDBBase  # 引入获取数据的类。
+#
+#     DB_BASE = JukuanDBBase  # 定义数据访问的实例。
+#
+# if environment == 'QA':  # 设置回测环境-在聚宽上使用
+#     from jukuan_macd_config import *  # 引入信号检测配置类。
+#     from jukuan_db import QADBBase  # 引入获取数据的类# 。
+#
+#     DB_BASE = QADBBase  # 定义数据访问的实例。
+#
+#
+# if environment == 'Rqalpha':  # 设置回测环境-在聚宽上使用
+#     from jukuan_macd_config import *  # 引入信号检测配置类。
+#     from rqalpha_db import RqalphaDBBase  # 引入获取数据的类。
+#
+#     DB_BASE = RqalphaDBBase  # 定义数据访问的实例。
 
 __metaclass__ = type
 
@@ -778,20 +778,26 @@ class MacdCache:
     """
 
     def __init__(self, period, init_tm, count=500, stocks=None):
-        self.dbkline = DB_BASE()  # 数据查询接口
-        self.indicator = Indicator()  # macd指标检测接口
-        self.period = period  # 指标检测的时间周期
-        if not init_tm:  # 初始化时间
-            raise Exception(u'【macd缓存初始化异常】:init_tm is null')
-        self.init_tm = init_tm
-        self.bar_cache_num = count  # 数量. 缓存多少个bar的检测结果
-        if not stocks:
-            stocks = []
-        self.stocks = stocks
-        self.bar_cache_cols = COLS
-        self.bars = {}
-        self.divergences = {}  # 当前收盘后触发的背离
-        self.__init_cache()
+        if period is None and init_tm is None:
+            self.divergences = {}  # 当前收盘后触发的背离
+            self.indicator = Indicator()  # macd指标检测接口
+        else:
+            self.dbkline = DB_BASE()  # 数据查询接口
+            self.indicator = Indicator()  # macd指标检测接口
+            self.period = period  # 指标检测的时间周期
+            if not init_tm:  # 初始化时间
+                raise Exception(u'【macd缓存初始化异常】:init_tm is null')
+            self.init_tm = init_tm
+            self.bar_cache_num = count  # 数量. 缓存多少个bar的检测结果
+            if not stocks:
+                stocks = []
+            self.stocks = stocks
+            self.bar_cache_cols = COLS
+            self.bars = {}
+            self.divergences = {}  # 当前收盘后触发的背离
+            self.__init_cache()
+
+
 
     def __init_cache(self):
         """

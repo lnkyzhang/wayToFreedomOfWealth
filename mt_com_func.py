@@ -92,4 +92,27 @@ def mt_select_stocklist(factors_data, stock_counts):
     hold_list = all_score.index[:stock_counts].tolist()
     return hold_list
 
+def mt_fq(df, factor, fq='qfq'):
+    """
+    根据输入的为复权的数据进行复权
+    默认条件下columns [close,high,low,open]
+    :param df: 输入数据
+    :param factor: 复权因子的string
+    :return: 复权后数据
+    """
 
+    if fq is 'qfq':
+        standard_df = df[factor] / df[factor].iloc[-1]
+        columns = ['close', 'high', 'low', 'open']
+        for column in columns:
+            df[column] *= standard_df
+
+    if fq is 'hfq':
+        pass
+
+    return df
+
+
+if __name__ == '__main__':
+    df = pd.read_csv('002594.csv')
+    print(mt_fq(df, 'factor'))

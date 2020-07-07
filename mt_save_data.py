@@ -1,5 +1,5 @@
 from dateutil.relativedelta import relativedelta
-from jqdatasdk import query, valuation, indicator, get_fundamentals, finance
+from jqdatasdk import query, valuation, indicator, get_fundamentals, finance, get_bars
 
 from mt_com_setting import *
 import QUANTAXIS as QA
@@ -67,6 +67,9 @@ def mt_save_financial_from_JQData(stk, start_date, end_date):
 
         start_dt += delta
 
+def TestGetMinDataFromJQdata():
+    df = get_bars('002594.XSHE', 1000000, unit='5m', fields=['date', 'open', 'high', 'low', 'close', 'volume', 'factor'])
+    df.to_csv("比亚迪5min")
 
 if __name__ == '__main__':
     # q = query(indicator).filter(indicator.code == '000001.XSHE')
@@ -74,7 +77,9 @@ if __name__ == '__main__':
     # df = get_fundamentals(q, statDate='2015')
     # print(df)
 
-    mt_save_financial_from_JQData('finance.STK_INCOME_STATEMENT',"2005-01-01", "2020-04-16")
+    # mt_save_financial_from_JQData('finance.STK_INCOME_STATEMENT',"2005-01-01", "2020-04-16")
+
+    TestGetMinDataFromJQdata()
 
 
 

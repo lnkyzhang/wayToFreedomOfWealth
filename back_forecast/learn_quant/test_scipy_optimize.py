@@ -40,3 +40,4 @@ if __name__ == '__main__':
     # df=finance.run_query(q)
     print(stocks_list_before)
     print("剩余条数 :", get_query_count())
+
