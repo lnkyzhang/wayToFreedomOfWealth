@@ -42,7 +42,7 @@ LIMIT_DETECT_LIMIT_FACTOR = 0.99
 检测背离的参数配置
 """
 # 背离检测：最多使用5个相邻的极值点，两两组合检测背离
-DIVERGENCE_DETECT_MOST_LIMIT_NUM = 5
+DIVERGENCE_DETECT_MOST_LIMIT_NUM = 2
 
 # 背离检测：DIF涨跌幅的绝对值+价格涨跌幅的绝对值。用于判断是不是一个比较显著的背离。
 DIVERGENCE_DETECT_SIGNIFICANCE = 0.1

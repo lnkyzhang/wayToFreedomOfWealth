@@ -30,8 +30,11 @@ import backtrader.indicators as btind
 import backtrader.utils.flushfile
 
 import pandas as pd
+from QUANTAXIS import QA_data_min_resample
+from QUANTAXIS.QAData.data_resample import QA_data_min_to_day
 from backtrader import indicator, LinePlotterIndicator
 
+from BackTraderTest.BackTraderFunc.DataResample import data_min_resample
 from BackTraderTest.beat_random_entry import read_dataframe
 from back_forecast.learn_quant.MACD.jukuan_macd_signal import *
 
@@ -39,6 +42,53 @@ from back_forecast.learn_quant.MACD.jukuan_macd_signal import *
 pd.set_option('display.max_rows', 5000)
 pd.set_option('display.max_columns', 100)
 pd.set_option('display.width', 300)
+
+
+def read_dataframe(filename, years, typeList=[]):
+    colnames = ['ticker', 'period', 'date', 'time',
+                'open', 'high', 'low', 'close', 'volume', 'openinterest']
+
+    colsused = ['date',
+                'open', 'high', 'low', 'close', 'volume', 'openinterest']
+
+    res = []
+
+    df = pd.read_csv(filename,
+                     skiprows=0,  # using own column names, skip header
+                     header=0,
+                     names=None,
+                     usecols=colsused,
+                     parse_dates=['date'],
+                     infer_datetime_format=True,
+                     index_col='date')
+
+    if years:  # year or year range specified
+        ysplit = years.split('-')
+
+        # left side limit
+        mask = df.index >= ((ysplit[0] or '0001') + '-01-01')  # support -YYYY
+
+        # right side liit
+        if len(ysplit) > 1:  # multiple or open ended (YYYY-ZZZZ or YYYY-)
+            if ysplit[1]:  # open ended if not years[1] (YYYY- format)
+                mask &= df.index <= (ysplit[1] + '-12-31')
+        else:  # single year specified YYYY
+            mask &= df.index <= (ysplit[0] + '-12-31')
+
+        df = df.loc[mask]  # select the given date range
+
+    # df['code'] = '002694'
+    # df.index.rename('datetime', inplace=True)
+    # # df['datetime'] = df.index
+
+    if len(typeList) > 0:
+        for i in typeList:
+            res.append(data_min_resample(df, i))
+
+    else:
+        res.append(df)
+
+    return res
 
 
 class MacdDivergence(bt.Indicator):
@@ -49,8 +99,8 @@ class MacdDivergence(bt.Indicator):
     plotlines = dict(
         top_divergences=dict(marker='*', markersize=15.0, color='lime', fillstyle='full'),
         bottom_divergences=dict(marker='*', markersize=15.0, color='red', fillstyle='full'),
-        gold_cross=dict(marker='s', markersize=3.0, color='red', fillstyle='full'),
-        death_cross=dict(marker='s', markersize=3.0, color='lime', fillstyle='full')
+        gold_cross=dict(_plotskip=True, marker='s', markersize=3.0, color='red', fillstyle='full'),
+        death_cross=dict(_plotskip=True, marker='s', markersize=3.0, color='lime', fillstyle='full')
     )
 
     plotinfo = dict(plot=True, subplot=True, plotforce=True)
@@ -67,7 +117,7 @@ class MacdDivergence(bt.Indicator):
         '''
         self.lines.macd = self.macd = btind.MACD(self.data0)
         self.lines.signal = self.macd.signal
-        self.crossOver = btind.CrossOver(self.macd.macd, self.macd.signal)
+        self.cross = self.crossOver = btind.CrossOver(self.macd.macd, self.macd.signal)
         self.diff = (self.macd.macd - self.macd.signal) * 2
 
     def next(self):
@@ -95,9 +145,11 @@ class MacdDivergence(bt.Indicator):
 
         if len(self.divergences) > 0:
             if self.macdCache.divergences['divergences'][0].divergence_type is DivergenceType.Top:
-                self.lines.top_divergences[0] = self.macd.macd[0]
+                # self.lines.top_divergences[0] = self.macd.macd[0]
+                self.lines.top_divergences[0] = -1.0
             elif self.macdCache.divergences['divergences'][0].divergence_type is DivergenceType.Bottom:
-                self.lines.bottom_divergences[0] = self.macd.macd[0]
+                # self.lines.bottom_divergences[0] = self.macd.macd[0]
+                self.lines.bottom_divergences[0] = 1.0
 
 class StopTrailer(bt.Indicator):
     _nextforce = True  # force system into step by step calcs
@@ -162,6 +214,8 @@ class St(bt.Strategy):
         self.exit_long = bt.ind.CrossDown(self.data,
                                           st.stop_long, plotname='Exit Long')
 
+        self.buy_point = self.macdDivergence.bottom_divergences
+
         self.order = None
         self.entering = None
 
@@ -197,7 +251,7 @@ class St(bt.Strategy):
         #     self.order = self.order_target_percent(target=1.0)
         #     if self.order:
         #         self.entering = 1
-        elif self.macdDivergence.gold_cross[0] > 0:
+        elif self.macdDivergence.bottom_divergences[0] > 0:
             self.order = self.order_target_percent(target=1.0)
             if self.order:
                 self.entering = 1
@@ -252,38 +306,14 @@ def runstrat():
     cerebro = bt.Cerebro()
 
     # Data feed kwargs
-    # dataargs = dict(dataname=read_dataframe(args.data, args.years))
-    # cerebro.adddata(bt.feeds.PandasData(**dataargs))
+    # '15min', '30min', '60min',
+    dataframe = read_dataframe(args.data, args.years, ['60min'])
 
-    # dataframe = pd.read_csv(args.data,
-    #                             skiprows=0,
-    #                             header=0,
-    #                             parse_dates=True,
-    #                             index_col=0)
+    for i in range(len(dataframe)):
+        # dataframe[i] = dataframe[i].reset_index().set_index(['datetime'])
 
-    data = btfeeds.GenericCSVData(
-        dataname=args.data,
-        fromdate=datetime.datetime(2015, 1, 1),
-        todate=datetime.datetime(2015, 12, 31),
+        cerebro.adddata(bt.feeds.PandasData(dataname=dataframe[i]))
 
-        nullvalue=0.0,
-        dtformat='%Y/%m/%d %H:%M',
-        tmformat='%H:%M',
-        datetime=1,
-        open=2,
-        high=3,
-        low=4,
-        close=5,
-        volume=6,
-        openinterest=-1
-    )
-
-
-    # data = btfeeds.BacktraderCSVData(dataname=args.data)
-
-    # cerebro.adddata(data)
-
-    cerebro.resampledata(data, timeframe=bt.TimeFrame.Minutes, compression=12)
 
     cerebro.addstrategy(St)
 
@@ -301,7 +331,7 @@ def parse_args():
                         default='002594.csv',
                         help='Data to be read in')
 
-    parser.add_argument('--years', default='',
+    parser.add_argument('--years', default='2015',
                         help='Formats: YYYY-ZZZZ / YYYY / YYYY- / -ZZZZ')
 
     parser.add_argument('--multi', required=False, action='store_true',
