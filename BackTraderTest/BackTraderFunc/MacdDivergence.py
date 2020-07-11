@@ -8,6 +8,7 @@ pd.set_option('display.width', 300)
 def macd_extend_data(df):
     '''
     如果这个bar发生了金叉或死叉，根据交叉点查找3种极值[MACD，CLOSE, DIF]，并在当前bar，记录极值产生的时间
+    index:timeframe
     :param df:
     :return:
     '''
@@ -39,7 +40,7 @@ def macd_extend_data(df):
     for i in range(len(cross_df) - 1, 0, -1):
         cur_index = cross_df.iloc[i].name
         last_index = cross_df.iloc[i-1].name
-        temp_df = res_df.loc[last_index + 1: cur_index - 1, :][['close', 'dif', 'histogram']]
+        temp_df = res_df.loc[last_index: cur_index, :][['close', 'dif', 'histogram']]
 
         if cross_df.iloc[i].gold_cross:
             temp_row = temp_df.min(axis=0)
@@ -78,40 +79,22 @@ def macd_extend_data(df):
 
                 if divergence_type is not None:
                     res_df.loc[cross_df.iloc[ii].name, [divergence_type]] = True
-                    res_df.loc[cross_df.iloc[ii].name, ['divergence_lastPoint']] = cross_df.iloc[ii - jj][
-                        'date']
+                    res_df.loc[cross_df.iloc[ii].name, ['divergence_lastPoint']] = cross_df.iloc[ii - jj].name
                     break
 
 
     findDiverse(gold_cross_df)
     findDiverse(death_cross_df)
-    print("123123123")
+
+    return res_df
 
     # todo
-    # 1.condition to recognize divergence
-    # 2.how to make this macd divergence to backtrader lines
-    
+    # 1.condition to recognize divergence:
+    # 2.how to make this macd divergence to backtrader lines : ALLN is a indicater can combine this to backtrader
+    # 3.learn benchmark
+    # 4.data feed from pandas and extendPandasData   :  pandasData inherit
 
 
-
-
-    # for ii in range(len(gold_cross_df) - 1, -1, -1):
-    #     if ii > divergence_detect_cross_count:
-    #         detect_count = divergence_detect_cross_count
-    #     else:
-    #         detect_count = ii
-    #
-    #     for jj in range(1, detect_count + 1):
-    #         if gold_cross_df.iloc[ii]['close'] < gold_cross_df.iloc[ii - jj]['close']\
-    #                 and gold_cross_df.iloc[ii]['dif'] > gold_cross_df.iloc[ii - jj]['dif']:
-    #             res_df.loc[gold_cross_df.iloc[ii].name, ['divergence_bottom']] = True
-    #             res_df.loc[gold_cross_df.iloc[ii].name, ['divergence_lastPoint']] = gold_cross_df.iloc[ii - jj]['date']
-    #             break
-
-    print("123123")
-
-
-    cross_df = df[(df.index < cross_tm) & (df[pre_cross_type])]
 
 
 
@@ -119,7 +102,7 @@ def macd_extend_data(df):
 
 if __name__ == '__main__':
 
-    df = pd.read_csv("000651.csv")
+    df = pd.read_csv("../samples/mixing-timeframes/000651.csv")
 
     macd_extend_data(df)
 

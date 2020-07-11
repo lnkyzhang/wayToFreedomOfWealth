@@ -34,8 +34,9 @@ from QUANTAXIS import QA_data_min_resample
 from QUANTAXIS.QAData.data_resample import QA_data_min_to_day
 from backtrader import indicator, LinePlotterIndicator
 
+from BackTraderTest.BackTraderFunc.DataReadFromCsv import read_dataframe
 from BackTraderTest.BackTraderFunc.DataResample import data_min_resample
-from BackTraderTest.beat_random_entry import read_dataframe
+from BackTraderTest.BackTraderFunc.MacdDivergence import macd_extend_data
 from back_forecast.learn_quant.MACD.jukuan_macd_signal import *
 
 # pd全局设置
@@ -44,51 +45,16 @@ pd.set_option('display.max_columns', 100)
 pd.set_option('display.width', 300)
 
 
-def read_dataframe(filename, years, typeList=[]):
-    colnames = ['ticker', 'period', 'date', 'time',
-                'open', 'high', 'low', 'close', 'volume', 'openinterest']
 
-    colsused = ['date',
-                'open', 'high', 'low', 'close', 'volume', 'openinterest']
 
-    res = []
 
-    df = pd.read_csv(filename,
-                     skiprows=0,  # using own column names, skip header
-                     header=0,
-                     names=None,
-                     usecols=colsused,
-                     parse_dates=['date'],
-                     infer_datetime_format=True,
-                     index_col='date')
+class pandas_divergence(bt.feeds.PandasData):
+    # Add a 'pe' line to the inherited ones from the base class
+    lines = ('divergence_top', 'divergence_bottom',)
 
-    if years:  # year or year range specified
-        ysplit = years.split('-')
-
-        # left side limit
-        mask = df.index >= ((ysplit[0] or '0001') + '-01-01')  # support -YYYY
-
-        # right side liit
-        if len(ysplit) > 1:  # multiple or open ended (YYYY-ZZZZ or YYYY-)
-            if ysplit[1]:  # open ended if not years[1] (YYYY- format)
-                mask &= df.index <= (ysplit[1] + '-12-31')
-        else:  # single year specified YYYY
-            mask &= df.index <= (ysplit[0] + '-12-31')
-
-        df = df.loc[mask]  # select the given date range
-
-    # df['code'] = '002694'
-    # df.index.rename('datetime', inplace=True)
-    # # df['datetime'] = df.index
-
-    if len(typeList) > 0:
-        for i in typeList:
-            res.append(data_min_resample(df, i))
-
-    else:
-        res.append(df)
-
-    return res
+    # openinterest in GenericCSVData has index 7 ... add 1
+    # add the parameter to the parameters inherited from the base class
+    params = (('divergence_top', 14), ('divergence_bottom', 15),)
 
 
 class MacdDivergence(bt.Indicator):
@@ -189,6 +155,26 @@ class StopTrailer(bt.Indicator):
                 self.l.stop_long[0] = max(self.s_l[0], self.l.stop_long[-1])
             elif self.strat.position.size < 0:
                 self.l.stop_short[0] = min(self.s_s[0], self.l.stop_short[-1])
+
+class Divergence(bt.Indicator):
+    lines = ('top_divergences', 'bottom_divergences')
+
+    def __init__(self):
+        self.strat = self._owner  # alias for clarity
+
+        self.data.divergence_top
+
+        # Volatility which determines stop distance
+        atr = bt.ind.ATR(self.data, period=self.p.atrperiod)
+        emaatr = bt.ind.EMA(atr, period=self.p.emaperiod)
+        self.stop_dist = emaatr * self.p.stopfactor
+
+        # Running stop price calc, applied in next according to market pos
+        # self.s_l = self.data - self.stop_dist
+        # self.s_s = self.data + self.stop_dist
+
+        self.s_l = self.data * 0.7
+
 class St(bt.Strategy):
 
     params = dict(
@@ -213,6 +199,9 @@ class St(bt.Strategy):
         # Exit Criteria (Stop Trail) for long / short positions
         self.exit_long = bt.ind.CrossDown(self.data,
                                           st.stop_long, plotname='Exit Long')
+
+        self.testIndicate = bt.ind.AllN(self.data0.divergence_top)
+        self.testIndicate2 = bt.ind.AllN(self.data0.divergence_bottom)
 
         self.buy_point = self.macdDivergence.bottom_divergences
 
@@ -251,7 +240,7 @@ class St(bt.Strategy):
         #     self.order = self.order_target_percent(target=1.0)
         #     if self.order:
         #         self.entering = 1
-        elif self.macdDivergence.bottom_divergences[0] > 0:
+        elif self.macdDivergence.gold_cross[0] > 0:
             self.order = self.order_target_percent(target=1.0)
             if self.order:
                 self.entering = 1
@@ -307,13 +296,15 @@ def runstrat():
 
     # Data feed kwargs
     # '15min', '30min', '60min',
-    dataframe = read_dataframe(args.data, args.years, ['60min'])
+    dataframe = read_dataframe(args.data, args.years, ['D'])
 
     for i in range(len(dataframe)):
-        # dataframe[i] = dataframe[i].reset_index().set_index(['datetime'])
+        temp_df = macd_extend_data(dataframe[i])
 
-        cerebro.adddata(bt.feeds.PandasData(dataname=dataframe[i]))
+        # emp_df.loc[50:100, ['divergence_top']] = 0
+        # temp_df.loc[temp_df['divergence_top'] == False, ['divergence_top']] = 0
 
+        cerebro.adddata(pandas_divergence(dataname=temp_df))
 
     cerebro.addstrategy(St)
 
@@ -328,10 +319,10 @@ def parse_args():
         description='Sample for pivot point and cross plotting')
 
     parser.add_argument('--data', required=False,
-                        default='002594.csv',
+                        default='000651.csv',
                         help='Data to be read in')
 
-    parser.add_argument('--years', default='2015',
+    parser.add_argument('--years', default='2015-2020',
                         help='Formats: YYYY-ZZZZ / YYYY / YYYY- / -ZZZZ')
 
     parser.add_argument('--multi', required=False, action='store_true',
@@ -344,5 +335,5 @@ def parse_args():
     return parser.parse_args()
 
 
-    if __name__ == '__main__':
-        runstrat()
+if __name__ == '__main__':
+    runstrat()
