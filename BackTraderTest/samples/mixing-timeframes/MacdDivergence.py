@@ -35,6 +35,7 @@ def macd_extend_data(df):
 
     cross_df = pd.concat([gold_cross_df, death_cross_df], axis=0).sort_index()
 
+    # make data with limit of cross
     for i in range(len(cross_df) - 1, 0, -1):
         cur_index = cross_df.iloc[i].name
         last_index = cross_df.iloc[i-1].name
@@ -49,30 +50,70 @@ def macd_extend_data(df):
         res_df.loc[cur_index, 'limit_dif'] = temp_row['dif']
         res_df.loc[cur_index, 'limit_histogram'] = temp_row['histogram']
 
+    # find divergence
+    divergence_detect_cross_count = 5
+    res_df['divergence_top'] = False
+    res_df['divergence_bottom'] = False
+    res_df['divergence_lastPoint'] = None
 
-    for index, row in cross_df.iloc[::-1].iterrows():
-        front_row = cross_df.loc[cross_df.index < index][-1].index
+    def findDiverse(cross_df):
+        for ii in range(len(cross_df) - 1, -1, -1):
+            if ii > divergence_detect_cross_count:
+                detect_count = divergence_detect_cross_count
+            else:
+                detect_count = ii
 
-    for gold_index, gold_row in gold_cross_df.iloc[::-1].iterrows():
-        death_index = death_cross_df[death_cross_df.index < gold_index].iloc[-1].name
-        temp_row = res_df.loc[death_index:gold_index, :][['close', 'dif', 'histogram']].min(axis=0)
-        res_df.loc[gold_index, 'limit_close'] = temp_row['close']
-        res_df.loc[gold_index, 'limit_dif'] = temp_row['dif']
-        res_df.loc[gold_index, 'limit_histogram'] = temp_row['histogram']
+            divergence_type = None
 
-    for death_index, death_row in death_cross_df.iloc[::-1].iterrows():
-        gold_index = gold_cross_df[gold_cross_df.index < death_index].iloc[-1].name
-        temp_row = res_df.loc[gold_index:death_index, :][['close', 'dif', 'histogram']].max(axis=0)
-        res_df.loc[death_index, 'limit_close'] = temp_row['close']
-        res_df.loc[death_index, 'limit_dif'] = temp_row['dif']
-        res_df.loc[death_index, 'limit_histogram'] = temp_row['histogram']
+            for jj in range(1, detect_count + 1):
+                if cross_df.iloc[ii].gold_cross:
+                    if cross_df.iloc[ii]['close'] < cross_df.iloc[ii - jj]['close'] \
+                            and cross_df.iloc[ii]['dif'] > cross_df.iloc[ii - jj]['dif']:
+                        divergence_type = 'divergence_bottom'
+
+                else:
+                    if cross_df.iloc[ii]['close'] > cross_df.iloc[ii - jj]['close'] \
+                            and cross_df.iloc[ii]['dif'] < cross_df.iloc[ii - jj]['dif']:
+                        divergence_type = 'divergence_top'
+
+                if divergence_type is not None:
+                    res_df.loc[cross_df.iloc[ii].name, [divergence_type]] = True
+                    res_df.loc[cross_df.iloc[ii].name, ['divergence_lastPoint']] = cross_df.iloc[ii - jj][
+                        'date']
+                    break
 
 
+    findDiverse(gold_cross_df)
+    findDiverse(death_cross_df)
+    print("123123123")
+
+    # todo
+    # 1.condition to recognize divergence
+    # 2.how to make this macd divergence to backtrader lines
+    
+
+
+
+
+    # for ii in range(len(gold_cross_df) - 1, -1, -1):
+    #     if ii > divergence_detect_cross_count:
+    #         detect_count = divergence_detect_cross_count
+    #     else:
+    #         detect_count = ii
+    #
+    #     for jj in range(1, detect_count + 1):
+    #         if gold_cross_df.iloc[ii]['close'] < gold_cross_df.iloc[ii - jj]['close']\
+    #                 and gold_cross_df.iloc[ii]['dif'] > gold_cross_df.iloc[ii - jj]['dif']:
+    #             res_df.loc[gold_cross_df.iloc[ii].name, ['divergence_bottom']] = True
+    #             res_df.loc[gold_cross_df.iloc[ii].name, ['divergence_lastPoint']] = gold_cross_df.iloc[ii - jj]['date']
+    #             break
+
+    print("123123")
 
 
     cross_df = df[(df.index < cross_tm) & (df[pre_cross_type])]
 
-    print("123123")
+
 
 
 
