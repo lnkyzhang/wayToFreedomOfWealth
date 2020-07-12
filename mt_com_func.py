@@ -114,5 +114,8 @@ def mt_fq(df, factor, fq='qfq'):
 
 
 if __name__ == '__main__':
-    df = pd.read_csv('002594.csv')
-    print(mt_fq(df, 'factor'))
+    df = pd.read_csv('000651.csv')
+    res_df = mt_fq(df, 'factor')
+    res_df.to_csv('000651-qfq.csv')
+
+    print('123123')

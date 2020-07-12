@@ -54,7 +54,7 @@ class pandas_divergence(bt.feeds.PandasData):
 
     # openinterest in GenericCSVData has index 7 ... add 1
     # add the parameter to the parameters inherited from the base class
-    params = (('divergence_top', 14), ('divergence_bottom', 15),)
+    params = (('divergence_top', 15), ('divergence_bottom', 16),)
 
 
 class MacdDivergence(bt.Indicator):
@@ -159,21 +159,14 @@ class StopTrailer(bt.Indicator):
 class Divergence(bt.Indicator):
     lines = ('top_divergences', 'bottom_divergences')
 
+    plotinfo = dict(plot=True, subplot=True, plotforce=True)
+
     def __init__(self):
-        self.strat = self._owner  # alias for clarity
+        # self.strat = self._owner  # alias for clarity
 
-        self.data.divergence_top
+        self.lines.top_divergences = -self.data.divergence_top
+        self.lines.bottom_divergences = self.data.divergence_bottom
 
-        # Volatility which determines stop distance
-        atr = bt.ind.ATR(self.data, period=self.p.atrperiod)
-        emaatr = bt.ind.EMA(atr, period=self.p.emaperiod)
-        self.stop_dist = emaatr * self.p.stopfactor
-
-        # Running stop price calc, applied in next according to market pos
-        # self.s_l = self.data - self.stop_dist
-        # self.s_s = self.data + self.stop_dist
-
-        self.s_l = self.data * 0.7
 
 class St(bt.Strategy):
 
@@ -200,10 +193,10 @@ class St(bt.Strategy):
         self.exit_long = bt.ind.CrossDown(self.data,
                                           st.stop_long, plotname='Exit Long')
 
-        self.testIndicate = bt.ind.AllN(self.data0.divergence_top)
-        self.testIndicate2 = bt.ind.AllN(self.data0.divergence_bottom)
+        # self.testIndicate = bt.ind.AllN(self.data0.divergence_top)
+        # self.testIndicate2 = bt.ind.AllN(self.data0.divergence_bottom)
 
-        self.buy_point = self.macdDivergence.bottom_divergences
+        self.testIndicate = Divergence()
 
         self.order = None
         self.entering = None
@@ -296,7 +289,7 @@ def runstrat():
 
     # Data feed kwargs
     # '15min', '30min', '60min',
-    dataframe = read_dataframe(args.data, args.years, ['D'])
+    dataframe = read_dataframe(args.data, args.years, ['60min'])
 
     for i in range(len(dataframe)):
         temp_df = macd_extend_data(dataframe[i])
@@ -304,7 +297,9 @@ def runstrat():
         # emp_df.loc[50:100, ['divergence_top']] = 0
         # temp_df.loc[temp_df['divergence_top'] == False, ['divergence_top']] = 0
 
-        cerebro.adddata(pandas_divergence(dataname=temp_df))
+        cerebro.adddata(pandas_divergence(dataname=temp_df,
+                                          divergence_top=temp_df.columns.to_list().index('divergence_top'),
+                                          divergence_bottom=temp_df.columns.to_list().index('divergence_bottom')))
 
     cerebro.addstrategy(St)
 
@@ -319,7 +314,7 @@ def parse_args():
         description='Sample for pivot point and cross plotting')
 
     parser.add_argument('--data', required=False,
-                        default='000651.csv',
+                        default='002594.csv',
                         help='Data to be read in')
 
     parser.add_argument('--years', default='2015-2020',

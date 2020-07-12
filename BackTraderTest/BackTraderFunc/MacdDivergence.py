@@ -1,5 +1,6 @@
 import pandas as pd
 import talib
+import numpy as np
 
 pd.set_option('display.max_rows', 5000)
 pd.set_option('display.max_columns', 100)
@@ -37,9 +38,13 @@ def macd_extend_data(df):
     cross_df = pd.concat([gold_cross_df, death_cross_df], axis=0).sort_index()
 
     # make data with limit of cross
-    for i in range(len(cross_df) - 1, 0, -1):
+    for i in range(len(cross_df) - 1, -1, -1):
         cur_index = cross_df.iloc[i].name
-        last_index = cross_df.iloc[i-1].name
+        if i > 1:
+            last_index = cross_df.iloc[i-1].name
+        else:
+            last_index = cross_df.iloc[i].name
+
         temp_df = res_df.loc[last_index: cur_index, :][['close', 'dif', 'histogram']]
 
         if cross_df.iloc[i].gold_cross:
@@ -52,10 +57,25 @@ def macd_extend_data(df):
         res_df.loc[cur_index, 'limit_histogram'] = temp_row['histogram']
 
     # find divergence
-    divergence_detect_cross_count = 5
+    divergence_detect_cross_count = 3
     res_df['divergence_top'] = False
     res_df['divergence_bottom'] = False
     res_df['divergence_lastPoint'] = None
+
+    gold_cross_df = res_df[res_df['gold_cross']]
+    death_cross_df = res_df[res_df['death_cross']]
+
+    def get_abs_median(series, num):
+        """
+        获取近num个bar内，正数负数，取中位数的绝对值最大值
+        :param series: Series类型
+        :param num: 数量。最近多少个bar内计算最大值
+        :return:
+        """
+        ser2 = series.iloc[-num:]
+        op_media = np.median(ser2[ser2 > 0])
+        ne_media = np.median(ser2[ser2 < 0])
+        return np.nanmax([abs(op_media), abs(ne_media)])
 
     def findDiverse(cross_df):
         for ii in range(len(cross_df) - 1, -1, -1):
@@ -68,16 +88,38 @@ def macd_extend_data(df):
 
             for jj in range(1, detect_count + 1):
                 if cross_df.iloc[ii].gold_cross:
-                    if cross_df.iloc[ii]['close'] < cross_df.iloc[ii - jj]['close'] \
-                            and cross_df.iloc[ii]['dif'] > cross_df.iloc[ii - jj]['dif']:
+                    if cross_df.iloc[ii]['limit_close'] < cross_df.iloc[ii - jj]['limit_close'] \
+                            and cross_df.iloc[ii]['limit_dif'] > cross_df.iloc[ii - jj]['limit_dif']:
                         divergence_type = 'divergence_bottom'
 
                 else:
-                    if cross_df.iloc[ii]['close'] > cross_df.iloc[ii - jj]['close'] \
-                            and cross_df.iloc[ii]['dif'] < cross_df.iloc[ii - jj]['dif']:
+                    if cross_df.iloc[ii]['limit_close'] > cross_df.iloc[ii - jj]['limit_close'] \
+                            and cross_df.iloc[ii]['limit_dif'] < cross_df.iloc[ii - jj]['limit_dif']:
                         divergence_type = 'divergence_top'
 
                 if divergence_type is not None:
+                    # 解决DIF和DEA纠缠的问题：要求两个背离点对应的macd值不能太小。
+                    cur_macd = cross_df.iloc[ii]['limit_histogram']
+                    last_macd = cross_df.iloc[ii - jj]['limit_histogram']
+                    median_macd = get_abs_median(res_df.loc[:cross_df.iloc[ii].name]['histogram'], 250)
+                    if abs(cur_macd / last_macd) < 0.3 \
+                        or max([abs(cur_macd), abs(last_macd)]) <= median_macd:
+                        break
+
+                    # 对背离点高度(dif)的要求：
+                    cur_dif = cross_df.iloc[ii]['limit_dif']
+                    last_dif = cross_df.iloc[ii - jj]['limit_dif']
+                    median_dif = get_abs_median(res_df.loc[:cross_df.iloc[ii].name]['dif'], 250) * 0.5
+                    if abs(cur_dif) < median_dif and abs(last_dif) < median_dif:
+                        break
+
+                    # DIF和价格的差，至少有一个比较显著才能算显著背离。
+                    cur_close = cross_df.iloc[ii]['limit_close']
+                    last_close = cross_df.iloc[ii - jj]['limit_close']
+                    significance = abs((cur_dif - last_dif) / last_dif) + abs(cur_close - last_close) / last_close
+                    if significance < 0.1:
+                        break
+
                     res_df.loc[cross_df.iloc[ii].name, [divergence_type]] = True
                     res_df.loc[cross_df.iloc[ii].name, ['divergence_lastPoint']] = cross_df.iloc[ii - jj].name
                     break
