@@ -4,6 +4,13 @@ from BackTraderTest.BackTraderFunc.DataResample import data_min_resample
 
 
 def read_dataframe(filename, years, typeList=[]):
+    '''
+
+    :param filename:
+    :param years:
+    :param typeList:
+    :return: dataframe list
+    '''
     colnames = ['ticker', 'period', 'date', 'time',
                 'open', 'high', 'low', 'close', 'volume', 'openinterest']
 
