@@ -37,15 +37,15 @@ from backtrader import indicator, LinePlotterIndicator
 from BackTraderTest.BackTraderFunc.DataReadFromCsv import read_dataframe
 from BackTraderTest.BackTraderFunc.DataResample import data_min_resample
 from BackTraderTest.BackTraderFunc.MacdDivergence import macd_extend_data
+from BackTraderTest.BackTraderFunc.St_TripleScreen import TripleScreen_extend_data
 from back_forecast.learn_quant.MACD.jukuan_macd_signal import *
+
+import talib
 
 # pd全局设置
 pd.set_option('display.max_rows', 5000)
 pd.set_option('display.max_columns', 100)
 pd.set_option('display.width', 300)
-
-
-
 
 
 class pandas_divergence(bt.feeds.PandasData):
@@ -55,6 +55,15 @@ class pandas_divergence(bt.feeds.PandasData):
     # openinterest in GenericCSVData has index 7 ... add 1
     # add the parameter to the parameters inherited from the base class
     params = (('divergence_top', 15), ('divergence_bottom', 16),)
+
+
+class pandas_tripleScreen(bt.feeds.PandasData):
+    # Add a 'pe' line to the inherited ones from the base class
+    lines = ('buyPoint',)
+
+    # openinterest in GenericCSVData has index 7 ... add 1
+    # add the parameter to the parameters inherited from the base class
+    params = (('buyPoint', 15),)
 
 
 class MacdDivergence(bt.Indicator):
@@ -117,6 +126,7 @@ class MacdDivergence(bt.Indicator):
                 # self.lines.bottom_divergences[0] = self.macd.macd[0]
                 self.lines.bottom_divergences[0] = 1.0
 
+
 class StopTrailer(bt.Indicator):
     _nextforce = True  # force system into step by step calcs
 
@@ -156,6 +166,7 @@ class StopTrailer(bt.Indicator):
             elif self.strat.position.size < 0:
                 self.l.stop_short[0] = min(self.s_s[0], self.l.stop_short[-1])
 
+
 class Divergence(bt.Indicator):
     lines = ('top_divergences', 'bottom_divergences')
 
@@ -168,8 +179,18 @@ class Divergence(bt.Indicator):
         self.lines.bottom_divergences = self.data.divergence_bottom
 
 
-class St(bt.Strategy):
+class TripleScreen(bt.Indicator):
+    lines = ('buyPoint',)
 
+    plotinfo = dict(plot=True, subplot=True, plotforce=True)
+
+    def __init__(self):
+        # self.strat = self._owner  # alias for clarity
+
+        self.lines.buyPoint = self.data.buyPoint
+
+
+class St(bt.Strategy):
     params = dict(
         atrperiod=14,  # measure volatility over x days
         emaperiod=10,  # smooth out period for atr volatility
@@ -183,7 +204,6 @@ class St(bt.Strategy):
         # 买入
         self.macdDivergence = MacdDivergence()
 
-
         # 止损
         self.stoptrailer = st = StopTrailer(atrperiod=self.p.atrperiod,
                                             emaperiod=self.p.emaperiod,
@@ -193,10 +213,9 @@ class St(bt.Strategy):
         self.exit_long = bt.ind.CrossDown(self.data,
                                           st.stop_long, plotname='Exit Long')
 
-        # self.testIndicate = bt.ind.AllN(self.data0.divergence_top)
-        # self.testIndicate2 = bt.ind.AllN(self.data0.divergence_bottom)
+        # self.testIndicate = Divergence()
 
-        self.testIndicate = Divergence()
+        self.tripleScreen = TripleScreen()
 
         self.order = None
         self.entering = None
@@ -265,7 +284,6 @@ class St(bt.Strategy):
 
         self.order = None
 
-
     def logdata(self):
         if self.p.verbose:  # logging
             txt = []
@@ -292,14 +310,14 @@ def runstrat():
     dataframe = read_dataframe(args.data, args.years, ['60min'])
 
     for i in range(len(dataframe)):
-        temp_df = macd_extend_data(dataframe[i])
+        # temp_df = macd_extend_data(dataframe[i])
+        # cerebro.adddata(pandas_divergence(dataname=temp_df,
+        #                                   divergence_top=temp_df.columns.to_list().index('divergence_top'),
+        #                                   divergence_bottom=temp_df.columns.to_list().index('divergence_bottom')))
 
-        # emp_df.loc[50:100, ['divergence_top']] = 0
-        # temp_df.loc[temp_df['divergence_top'] == False, ['divergence_top']] = 0
-
-        cerebro.adddata(pandas_divergence(dataname=temp_df,
-                                          divergence_top=temp_df.columns.to_list().index('divergence_top'),
-                                          divergence_bottom=temp_df.columns.to_list().index('divergence_bottom')))
+        temp_df = TripleScreen_extend_data(dataframe[i], "d", "w")
+        cerebro.adddata(pandas_tripleScreen(dataname=temp_df,
+                                            buyPoint=temp_df.columns.to_list().index('buyPoint'), ))
 
     cerebro.addstrategy(St)
 
@@ -314,10 +332,10 @@ def parse_args():
         description='Sample for pivot point and cross plotting')
 
     parser.add_argument('--data', required=False,
-                        default='002594.csv',
+                        default='000651.csv',
                         help='Data to be read in')
 
-    parser.add_argument('--years', default='2015-2020',
+    parser.add_argument('--years', default='2015-2017',
                         help='Formats: YYYY-ZZZZ / YYYY / YYYY- / -ZZZZ')
 
     parser.add_argument('--multi', required=False, action='store_true',
