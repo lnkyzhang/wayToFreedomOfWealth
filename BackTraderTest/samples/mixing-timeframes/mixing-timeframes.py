@@ -33,6 +33,7 @@ import pandas as pd
 from QUANTAXIS import QA_data_min_resample
 from QUANTAXIS.QAData.data_resample import QA_data_min_to_day
 from backtrader import indicator, LinePlotterIndicator
+from backtrader.analyzers import TimeReturn
 
 from BackTraderTest.BackTraderFunc.DataReadFromCsv import read_dataframe
 from BackTraderTest.BackTraderFunc.DataResample import data_min_resample
@@ -151,7 +152,7 @@ class StopTrailer(bt.Indicator):
         # self.s_l = self.data - self.stop_dist
         # self.s_s = self.data + self.stop_dist
 
-        self.s_l = self.data * 0.7
+        self.s_l = self.data * 0.85
 
     def next(self):
         # When entering the market, the stop has to be set
@@ -201,8 +202,6 @@ class St(bt.Strategy):
 
     def __init__(self):
 
-        # 买入
-        self.macdDivergence = MacdDivergence()
 
         # 止损
         self.stoptrailer = st = StopTrailer(atrperiod=self.p.atrperiod,
@@ -213,15 +212,14 @@ class St(bt.Strategy):
         self.exit_long = bt.ind.CrossDown(self.data,
                                           st.stop_long, plotname='Exit Long')
 
-        # self.testIndicate = Divergence()
-
-        self.tripleScreen = TripleScreen()
+        self.testIndicate = Divergence()
 
         self.order = None
         self.entering = None
 
     def start(self):
         self.entering = 0
+        self.start_val = self.broker.get_value()
 
     def next(self):
         txt = ','.join(
@@ -252,8 +250,8 @@ class St(bt.Strategy):
         #     self.order = self.order_target_percent(target=1.0)
         #     if self.order:
         #         self.entering = 1
-        elif self.macdDivergence.gold_cross[0] > 0:
-            self.order = self.order_target_percent(target=1.0)
+        elif self.testIndicate.bottom_divergences[0] > 0:
+            self.order = self.order_target_percent(target=0.99)
             if self.order:
                 self.entering = 1
 
@@ -299,6 +297,12 @@ class St(bt.Strategy):
             out = [self.datetime.date().isoformat(), txt.format(*args)]
             print(','.join(out))
 
+    def stop(self):
+        self.stop_val = self.broker.get_value()
+        self.pnl_val = self.stop_val - self.start_val
+        self.log('Start Value: {:.2f}', self.start_val)
+        self.log('Final Value: {:.2f}', self.stop_val)
+        self.log('PNL   Value: {:.2f}', self.pnl_val)
 
 def runstrat():
     args = parse_args()
@@ -310,14 +314,10 @@ def runstrat():
     dataframe = read_dataframe(args.data, args.years, ['60min'])
 
     for i in range(len(dataframe)):
-        # temp_df = macd_extend_data(dataframe[i])
-        # cerebro.adddata(pandas_divergence(dataname=temp_df,
-        #                                   divergence_top=temp_df.columns.to_list().index('divergence_top'),
-        #                                   divergence_bottom=temp_df.columns.to_list().index('divergence_bottom')))
-
-        temp_df = TripleScreen_extend_data(dataframe[i], "d", "w")
-        cerebro.adddata(pandas_tripleScreen(dataname=temp_df,
-                                            buyPoint=temp_df.columns.to_list().index('buyPoint'), ))
+        temp_df = macd_extend_data(dataframe[i])
+        cerebro.adddata(pandas_divergence(dataname=temp_df,
+                                          divergence_top=temp_df.columns.to_list().index('divergence_top'),
+                                          divergence_bottom=temp_df.columns.to_list().index('divergence_bottom')))
 
     cerebro.addstrategy(St)
 
@@ -335,14 +335,14 @@ def parse_args():
                         default='000651.csv',
                         help='Data to be read in')
 
-    parser.add_argument('--years', default='2015-2017',
+    parser.add_argument('--years', default='2010-2020',
                         help='Formats: YYYY-ZZZZ / YYYY / YYYY- / -ZZZZ')
 
     parser.add_argument('--multi', required=False, action='store_true',
                         help='Couple all lines of the indicator')
 
     parser.add_argument('--plot', required=False, action='store_true',
-                        default=True,
+                        default=False,
                         help=('Plot the result'))
 
     return parser.parse_args()
