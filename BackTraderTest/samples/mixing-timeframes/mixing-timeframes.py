@@ -33,7 +33,7 @@ import pandas as pd
 from QUANTAXIS import QA_data_min_resample
 from QUANTAXIS.QAData.data_resample import QA_data_min_to_day
 from backtrader import indicator, LinePlotterIndicator
-from backtrader.analyzers import TimeReturn
+from backtrader.analyzers import TimeReturn, Transactions
 
 from BackTraderTest.BackTraderFunc.DataReadFromCsv import read_dataframe
 from BackTraderTest.BackTraderFunc.DataResample import data_min_resample
@@ -67,71 +67,11 @@ class pandas_tripleScreen(bt.feeds.PandasData):
     params = (('buyPoint', 15),)
 
 
-class MacdDivergence(bt.Indicator):
-    lines = ('macd', 'signal', 'top_divergences', 'bottom_divergences', 'gold_cross', 'death_cross')
-
-    params = (('value', 5),)
-
-    plotlines = dict(
-        top_divergences=dict(marker='*', markersize=15.0, color='lime', fillstyle='full'),
-        bottom_divergences=dict(marker='*', markersize=15.0, color='red', fillstyle='full'),
-        gold_cross=dict(_plotskip=True, marker='s', markersize=3.0, color='red', fillstyle='full'),
-        death_cross=dict(_plotskip=True, marker='s', markersize=3.0, color='lime', fillstyle='full')
-    )
-
-    plotinfo = dict(plot=True, subplot=True, plotforce=True)
-
-    macdCache = MacdCache(None, None)  # mcad背离
-
-    divergences_df = pd.DataFrame(
-        columns=[CLOSE, DIF, DEA, MACD, GOLD, DEATH, DIF_LIMIT_TM, CLOSE_LIMIT_TM, MACD_LIMIT_TM])
-
-    def __init__(self):
-        '''
-        backtrader中的MACD，macd是diff，signal是dea
-        而jukuan_macd_signal中的macd是(dif - dea) * 2，diff是长短线差离，dea是diff的差离
-        '''
-        self.lines.macd = self.macd = btind.MACD(self.data0)
-        self.lines.signal = self.macd.signal
-        self.cross = self.crossOver = btind.CrossOver(self.macd.macd, self.macd.signal)
-        self.diff = (self.macd.macd - self.macd.signal) * 2
-
-    def next(self):
-        tm = self.data.datetime.date(0).isoformat()
-        self.divergences_df.loc[tm, [CLOSE, DIF, DEA, MACD]] = self.data0.close[0], self.macd[0], self.macd.signal[0], \
-                                                               self.diff[0]
-
-        if self.crossOver[0] > 0:
-            self.divergences_df.loc[tm, [GOLD, DEATH]] = True, False
-            self.lines.gold_cross[0] = self.macd + 0.5
-
-        elif self.crossOver[0] < 0:
-            self.divergences_df.loc[tm, [GOLD, DEATH]] = False, True
-            self.lines.death_cross[0] = self.macd - 0.5
-
-        else:
-            self.divergences_df.loc[tm, [GOLD, DEATH]] = False, False
-
-        self.macdCache.indicator.last_limit_point_tm(self.divergences_df, -1)
-
-        self.macdCache.update_divergences(self.divergences_df, 'divergences')
-
-        self.divergences = self.macdCache.divergences[
-            'divergences'] if 'divergences' in self.macdCache.divergences.keys() else []
-
-        if len(self.divergences) > 0:
-            if self.macdCache.divergences['divergences'][0].divergence_type is DivergenceType.Top:
-                # self.lines.top_divergences[0] = self.macd.macd[0]
-                self.lines.top_divergences[0] = -1.0
-            elif self.macdCache.divergences['divergences'][0].divergence_type is DivergenceType.Bottom:
-                # self.lines.bottom_divergences[0] = self.macd.macd[0]
-                self.lines.bottom_divergences[0] = 1.0
-
 
 class StopTrailer(bt.Indicator):
     _nextforce = True  # force system into step by step calcs
 
-    lines = ('stop_long',)
+    lines = ('stop_long', 'stop_long_l', 'stop_long_s')
     plotinfo = dict(subplot=False, plotlinelabels=True)
 
     params = dict(
@@ -153,19 +93,27 @@ class StopTrailer(bt.Indicator):
         # self.s_s = self.data + self.stop_dist
 
         self.s_l = self.data * 0.85
+        self.s_s = self.data * 0.90
+
+        self.lastLarge = True
 
     def next(self):
         # When entering the market, the stop has to be set
         if self.strat.entering > 0:  # entering long
             self.l.stop_long[0] = self.s_l[0]
-        elif self.strat.entering < 0:  # entering short
-            self.l.stop_short[0] = self.s_s[0]
+            self.l.stop_long_l[0] = self.s_l[0]
+            self.l.stop_long_s[0] = self.s_s[0]
 
         else:  # In the market, adjust stop only in the direction of the trade
             if self.strat.position.size > 0:
-                self.l.stop_long[0] = max(self.s_l[0], self.l.stop_long[-1])
-            elif self.strat.position.size < 0:
-                self.l.stop_short[0] = min(self.s_s[0], self.l.stop_short[-1])
+                self.l.stop_long_l[0] = max(self.s_l[0], self.l.stop_long_l[-1])
+                self.l.stop_long_s[0] = max(self.s_s[0], self.l.stop_long_s[-1])
+
+                if self.strat.stop_large:
+                    self.l.stop_long[0] = self.l.stop_long_l[0]
+                else:
+                    self.l.stop_long[0] = self.l.stop_long_s[0]
+
 
 
 class Divergence(bt.Indicator):
@@ -179,16 +127,6 @@ class Divergence(bt.Indicator):
         self.lines.top_divergences = -self.data.divergence_top
         self.lines.bottom_divergences = self.data.divergence_bottom
 
-
-class TripleScreen(bt.Indicator):
-    lines = ('buyPoint',)
-
-    plotinfo = dict(plot=True, subplot=True, plotforce=True)
-
-    def __init__(self):
-        # self.strat = self._owner  # alias for clarity
-
-        self.lines.buyPoint = self.data.buyPoint
 
 
 class St(bt.Strategy):
@@ -216,6 +154,7 @@ class St(bt.Strategy):
 
         self.order = None
         self.entering = None
+        self.stop_large = True
 
     def start(self):
         self.entering = 0
@@ -242,7 +181,14 @@ class St(bt.Strategy):
         closing = None
         if self.position.size > 0:  # In the market - Long
 
-            self.log('Long Stop Price: {:.2f}', self.stoptrailer.stop_long[0])
+            if self.testIndicate.bottom_divergences[0] > 0:
+                self.log("buy signal")
+                self.stop_large = True
+            if self.testIndicate.top_divergences[0] < 0:
+                self.log("sell signal")
+                self.stop_large = False
+
+            self.log('Long Stop Price: {:.2f}, current price: {:.2f}', self.stoptrailer.stop_long[0], self.data[0])
             if self.exit_long:
                 self.log('收到卖出信号')
                 self.order = self.close()
@@ -254,6 +200,7 @@ class St(bt.Strategy):
             self.order = self.order_target_percent(target=0.99)
             if self.order:
                 self.entering = 1
+                self.stop_large = True
 
     def notify_trade(self, trade):
         if trade.size > 0:
@@ -311,7 +258,7 @@ def runstrat():
 
     # Data feed kwargs
     # '15min', '30min', '60min',
-    dataframe = read_dataframe(args.data, args.years, ['60min'])
+    dataframe = read_dataframe(args.data, args.years, ['15min', '60min'])
 
     for i in range(len(dataframe)):
         temp_df = macd_extend_data(dataframe[i])
@@ -321,7 +268,14 @@ def runstrat():
 
     cerebro.addstrategy(St)
 
-    cerebro.run(stdstats=True, runonce=False)
+    cerebro.addanalyzer(bt.analyzers.PyFolio, _name='pyfolio')
+
+    strat = cerebro.run(stdstats=True, runonce=False)
+
+    pyfoliozer = strat[0].analyzers.getbyname('pyfolio')
+    returns, positions, transactions, gross_lev = pyfoliozer.get_pf_items()
+
+    transactions.to_csv("transtion.csv")
     if args.plot:
         cerebro.plot(style='candle')
 
