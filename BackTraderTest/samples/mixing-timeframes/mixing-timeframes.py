@@ -119,13 +119,26 @@ class StopTrailer(bt.Indicator):
 class Divergence(bt.Indicator):
     lines = ('top_divergences', 'bottom_divergences')
 
-    plotinfo = dict(plot=True, subplot=True, plotforce=True)
+    plotinfo = dict(plot=True, subplot=True)
 
     def __init__(self):
         # self.strat = self._owner  # alias for clarity
 
         self.lines.top_divergences = -self.data.divergence_top
         self.lines.bottom_divergences = self.data.divergence_bottom
+
+class volumeSlope(bt.Indicator):
+    params = dict(
+        emaperiod=5,  # smooth out period for atr volatility
+    )
+
+    line = ('volume_slope',)
+
+    plotinfo = dict(plot=True, subplot=True)
+
+    def __init__(self):
+        self.l.volume_slope = bt.talib.LINEARREG_SLOPE(self.data.volume, self.p.emaperiod)
+
 
 
 
@@ -150,7 +163,17 @@ class St(bt.Strategy):
         self.exit_long = bt.ind.CrossDown(self.data,
                                           st.stop_long, plotname='Exit Long')
 
-        self.testIndicate = Divergence()
+        self.testIndicate = Divergence(self.data1)
+
+        self.obv = bt.talib.OBV(self.data2, self.data2.volume)
+        self.ad = bt.talib.AD(self.data2.high, self.data2.low, self.data2.close, self.data2.volume)
+        self.adosc = bt.talib.ADOSC(self.data2.high, self.data2.low, self.data2.close, self.data2.volume)
+
+        # self.volumeSlope5 = volumeSlope(self.data2, emaperiod=5)
+        # self.volumeSlope30 = volumeSlope(self.data2, emaperiod=30)
+
+        self.volumeSlope5 = bt.talib.LINEARREG_SLOPE(self.data2.volume, 5)
+
 
         self.order = None
         self.entering = None
@@ -258,7 +281,7 @@ def runstrat():
 
     # Data feed kwargs
     # '15min', '30min', '60min',
-    dataframe = read_dataframe(args.data, args.years, ['15min', '60min'])
+    dataframe = read_dataframe(args.data, args.years, ['15min', '60min', 'd'])
 
     for i in range(len(dataframe)):
         temp_df = macd_extend_data(dataframe[i])
@@ -277,7 +300,8 @@ def runstrat():
 
     transactions.to_csv("transtion.csv")
     if args.plot:
-        cerebro.plot(style='candle')
+        cerebro.plot(style='line')
+        # cerebro.plot(style='candle')
 
 
 def parse_args():
@@ -289,14 +313,14 @@ def parse_args():
                         default='000651.csv',
                         help='Data to be read in')
 
-    parser.add_argument('--years', default='2010-2020',
+    parser.add_argument('--years', default='2015-2020',
                         help='Formats: YYYY-ZZZZ / YYYY / YYYY- / -ZZZZ')
 
     parser.add_argument('--multi', required=False, action='store_true',
                         help='Couple all lines of the indicator')
 
     parser.add_argument('--plot', required=False, action='store_true',
-                        default=False,
+                        default=True,
                         help=('Plot the result'))
 
     return parser.parse_args()
