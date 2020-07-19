@@ -127,19 +127,37 @@ class Divergence(bt.Indicator):
         self.lines.top_divergences = -self.data.divergence_top
         self.lines.bottom_divergences = self.data.divergence_bottom
 
-class volumeSlope(bt.Indicator):
+class VolumeSlope(bt.Indicator):
+    lines = ('volume_slope',)
+
     params = dict(
         emaperiod=5,  # smooth out period for atr volatility
     )
 
-    line = ('volume_slope',)
+    plotinfo = dict(plot=True, subplot=True)
+
+    def __init__(self):
+        self.l.volume_slope = bt.talib.LINEARREG_SLOPE(self.data, 5)
+
+
+class SlopeSlope(bt.Indicator):
+    lines = ('slope_slope', 'slope_slope_zero')
+
+    params = dict(
+        period=5,  # smooth out period for atr volatility
+    )
 
     plotinfo = dict(plot=True, subplot=True)
 
     def __init__(self):
-        self.l.volume_slope = bt.talib.LINEARREG_SLOPE(self.data.volume, self.p.emaperiod)
+        self.slope = bt.talib.LINEARREG_SLOPE(self.data.close, self.p.period)
+        self.l.slope_slope = bt.talib.LINEARREG_SLOPE(self.slope, self.p.period)
 
-
+    def next(self):
+        if self.l.slope_slope[0] > 0:
+            self.l.slope_slope_zero[0] = 1
+        else:
+            self.l.slope_slope_zero[0] = -1
 
 
 class St(bt.Strategy):
@@ -162,17 +180,36 @@ class St(bt.Strategy):
         # Exit Criteria (Stop Trail) for long / short positions
         self.exit_long = bt.ind.CrossDown(self.data,
                                           st.stop_long, plotname='Exit Long')
-
+        # macd背离
         self.testIndicate = Divergence(self.data1)
+        self.testIndicate15min = Divergence(self.data0)
+        self.testIndicated = Divergence(self.data2)
 
         self.obv = bt.talib.OBV(self.data2, self.data2.volume)
         self.ad = bt.talib.AD(self.data2.high, self.data2.low, self.data2.close, self.data2.volume)
         self.adosc = bt.talib.ADOSC(self.data2.high, self.data2.low, self.data2.close, self.data2.volume)
 
-        # self.volumeSlope5 = volumeSlope(self.data2, emaperiod=5)
+        # self.volumeSlope5 = VolumeSlope(self.data2)
         # self.volumeSlope30 = volumeSlope(self.data2, emaperiod=30)
 
-        self.volumeSlope5 = bt.talib.LINEARREG_SLOPE(self.data2.volume, 5)
+        # self.volumeSlope5 = bt.talib.LINEARREG_SLOPE(self.data2.volume, 5)
+
+        # 均线
+        # self.ema13 = bt.ind.EMA(self.data2, period=13)
+        self.ema26 = bt.talib.EMA(self.data2, period=26)
+        # self.ema60 = bt.ind.EMA(self.data2, period=60)
+
+        # self.ema13Slope = bt.talib.LINEARREG_SLOPE(self.ema13, 5)
+        self.ema26Slope = bt.talib.LINEARREG_SLOPE(self.ema26, 5)
+        # self.ema60Slope = bt.talib.LINEARREG_SLOPE(self.ema60, 5)
+
+        self.ema26SlopeSlope = SlopeSlope(self.data2, period=5)
+
+        self.ema26SlopeSlope1 = self.ema26SlopeSlope.slope_slope
+        self.ema26SlopeSlope2 = self.ema26SlopeSlope.slope_slope_zero
+
+        # ATR
+        self.atrDay = bt.ind.ATR(self.data2)
 
 
         self.order = None
@@ -310,7 +347,7 @@ def parse_args():
         description='Sample for pivot point and cross plotting')
 
     parser.add_argument('--data', required=False,
-                        default='000651.csv',
+                        default='002594.csv',
                         help='Data to be read in')
 
     parser.add_argument('--years', default='2015-2020',
