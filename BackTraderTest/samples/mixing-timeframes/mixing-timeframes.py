@@ -100,6 +100,7 @@ class StopTrailer(bt.Indicator):
     def next(self):
         # When entering the market, the stop has to be set
         if self.strat.entering > 0:  # entering long
+            self.strat.entering = 0
             self.l.stop_long[0] = self.s_l[0]
             self.l.stop_long_l[0] = self.s_l[0]
             self.l.stop_long_s[0] = self.s_s[0]
@@ -116,6 +117,10 @@ class StopTrailer(bt.Indicator):
 
 
 class EMASlopeStopTrailer(bt.Indicator):
+    '''
+    data0: 保证同步 小周期
+    data1：计算止损 日线 大周期
+    '''
     lines = ('stop_long', 'stop_long_l', 'stop_long_s', 'slope_slope', 'slope_slope_zero', )
     plotinfo = dict(subplot=True, plotlinelabels=True)
 
@@ -130,15 +135,15 @@ class EMASlopeStopTrailer(bt.Indicator):
         slopePeriod=5.0,
         atrPeriod=13,
         stopeFactorL=3.0,
-        stopFactorS=1.5,
+        stopFactorS=3.0,
     )
 
     def __init__(self):
         self.strat = self._owner  # alias for clarity
 
-        self.slope = bt.talib.LINEARREG_SLOPE(self.data.close, self.p.emaPeriod)
+        self.slope = bt.talib.LINEARREG_SLOPE(self.data1.close, self.p.emaPeriod)
         self.l.slope_slope = bt.talib.LINEARREG_SLOPE(self.slope, self.p.slopePeriod)
-        self.l.atr = bt.ind.ATR(self.data, period=self.p.atrPeriod)
+        self.l.atr = bt.ind.ATR(self.data1, period=self.p.atrPeriod)
         self.stopDistL = self.l.atr * self.p.stopeFactorL
         self.stopDistS = self.l.atr * self.p.stopFactorS
 
@@ -159,10 +164,10 @@ class EMASlopeStopTrailer(bt.Indicator):
                 self.l.stop_long_s[0] = max(self.s_s[0], self.l.stop_long_s[-1])
 
                 if self.l.slope_slope[0] > 0:
-                    self.l.slope_slope_zero[0] = 1
+                    self.l.slope_slope_zero[0] = 0.01
                     self.l.stop_long[0] = self.l.stop_long_l[0]
                 else:
-                    self.l.slope_slope_zero[0] = -1
+                    self.l.slope_slope_zero[0] = -0.01
                     self.l.stop_long[0] = self.l.stop_long_s[0]
 
 
@@ -172,6 +177,7 @@ class EMASlopeEntryPoint(bt.Indicator):
 
     params = dict(
         emaPeriod=26,
+        slopePeriod=5,
     )
 
     def __init__(self):
@@ -181,7 +187,7 @@ class EMASlopeEntryPoint(bt.Indicator):
         self.div_bottom_List = []
 
         self.ema = bt.ind.EMA(self.data, period=self.p.emaPeriod)
-        self.slope = bt.talib.LINEARREG_SLOPE(self.data, self.p.emaPeriod)
+        self.slope = bt.talib.LINEARREG_SLOPE(self.ema, self.p.slopePeriod)
 
         for data in self.strat.datas:
             self.div_top_List.append(data.divergence_top)
@@ -190,20 +196,37 @@ class EMASlopeEntryPoint(bt.Indicator):
     def next(self):
         self.l.entryPoint[0] = 0
 
-        if self.data[0] > self.ema[0] and self.slope[0] > 0:
-            if self.buyTrend:
+        if self.buyTrend:
+            if self.data[0] > self.ema[0] and self.slope[0] > -0.01:
+                self.buyTrend = False
                 self.l.entryPoint[0] = 1
-        else:
-            if self.buyTrend:
+            else:
                 for div_top in self.div_top_List:
                     if div_top[0] > 0:
                         self.buyTrend = False
                         self.l.top_divergences[0] = 1
-            else:
-                for div_bottom in self.div_bottom_List:
-                    if div_bottom[0] > 0:
-                        self.buyTrend = True
-                        self.l.bottom_divergences[0] = 1
+        else:
+            for div_bottom in self.div_bottom_List:
+                if div_bottom[0] > 0:
+                    self.buyTrend = True
+                    self.l.bottom_divergences[0] = 1
+
+
+        # if self.data[0] > self.ema[0] and self.slope[0] > 0:
+        #     if self.buyTrend:
+        #         self.buyTrend = False
+        #         self.l.entryPoint[0] = 1
+        # else:
+        #     if self.buyTrend:
+        #         for div_top in self.div_top_List:
+        #             if div_top[0] > 0:
+        #                 self.buyTrend = False
+        #                 self.l.top_divergences[0] = 1
+        #     else:
+        #         for div_bottom in self.div_bottom_List:
+        #             if div_bottom[0] > 0:
+        #                 self.buyTrend = True
+        #                 self.l.bottom_divergences[0] = 1
 
 
 class Divergence(bt.Indicator):
@@ -305,7 +328,8 @@ class St(bt.Strategy):
         self.test = EMASlopeEntryPoint(self.data2)
         self.entryPoint = self.test.entryPoint
 
-        self.testStopTrail = EMASlopeStopTrailer(self.data2)
+        # stop price
+        self.testStopTrail = EMASlopeStopTrailer(self.data0, self.data2)
 
         self.exit_long = bt.ind.CrossDown(self.data,
                                           self.testStopTrail.stop_long, plotname='Exit Long')
@@ -339,17 +363,9 @@ class St(bt.Strategy):
         if self.order is not None:
             return
 
-        self.entering = 0
+        # self.entering = 0
         closing = None
-        if self.position.size > 0:  # In the market - Long
-
-            if self.testIndicate.bottom_divergences[0] > 0:
-                self.log("buy signal")
-                self.stop_large = True
-            if self.testIndicate.top_divergences[0] < 0:
-                self.log("sell signal")
-                self.stop_large = False
-
+        if self.position.size > 0 and self.entering == 0:  # In the market - Long
             self.log('Long Stop Price: {:.2f}, current price: {:.2f}', self.stoptrailer.stop_long[0], self.data[0])
             if self.exit_long > 0:
                 self.log('收到卖出信号')
@@ -457,7 +473,7 @@ def parse_args():
                         default='000651.csv',
                         help='Data to be read in')
 
-    parser.add_argument('--years', default='2015-2020',
+    parser.add_argument('--years', default='2017',
                         help='Formats: YYYY-ZZZZ / YYYY / YYYY- / -ZZZZ')
 
     parser.add_argument('--multi', required=False, action='store_true',
