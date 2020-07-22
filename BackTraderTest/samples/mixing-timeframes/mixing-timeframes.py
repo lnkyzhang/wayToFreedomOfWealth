@@ -298,23 +298,23 @@ class St(bt.Strategy):
         self.testIndicate15min = Divergence(self.data0)
         self.testIndicated = Divergence(self.data2)
 
-        self.obv = bt.talib.OBV(self.data2, self.data2.volume)
-        self.ad = bt.talib.AD(self.data2.high, self.data2.low, self.data2.close, self.data2.volume)
-        self.adosc = bt.talib.ADOSC(self.data2.high, self.data2.low, self.data2.close, self.data2.volume)
+        # volume
+        # self.obv = bt.talib.OBV(self.data2, self.data2.volume)
+        # self.ad = bt.talib.AD(self.data2.high, self.data2.low, self.data2.close, self.data2.volume)
+        # self.adosc = bt.talib.ADOSC(self.data2.high, self.data2.low, self.data2.close, self.data2.volume)
 
         # self.volumeSlope5 = VolumeSlope(self.data2)
         # self.volumeSlope30 = volumeSlope(self.data2, emaperiod=30)
-
         # self.volumeSlope5 = bt.talib.LINEARREG_SLOPE(self.data2.volume, 5)
 
         # 均线
-        # self.ema13 = bt.ind.EMA(self.data2, period=13)
+        self.ema13 = bt.ind.EMA(self.data2, period=13)
         self.ema26 = bt.talib.EMA(self.data2, period=26)
-        # self.ema60 = bt.ind.EMA(self.data2, period=60)
+        self.ema60 = bt.ind.EMA(self.data2, period=60)
 
-        # self.ema13Slope = bt.talib.LINEARREG_SLOPE(self.ema13, 5)
+        self.ema13Slope = bt.talib.LINEARREG_SLOPE(self.ema13, 5)
         self.ema26Slope = bt.talib.LINEARREG_SLOPE(self.ema26, 5)
-        # self.ema60Slope = bt.talib.LINEARREG_SLOPE(self.ema60, 5)
+        self.ema60Slope = bt.talib.LINEARREG_SLOPE(self.ema60, 5)
 
         self.ema26SlopeSlope = SlopeSlope(self.data2, period=5)
 
@@ -473,7 +473,7 @@ def parse_args():
                         default='000651.csv',
                         help='Data to be read in')
 
-    parser.add_argument('--years', default='2017',
+    parser.add_argument('--years', default='2015-2017',
                         help='Formats: YYYY-ZZZZ / YYYY / YYYY- / -ZZZZ')
 
     parser.add_argument('--multi', required=False, action='store_true',
