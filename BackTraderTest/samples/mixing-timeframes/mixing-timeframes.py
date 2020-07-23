@@ -171,13 +171,65 @@ class EMASlopeStopTrailer(bt.Indicator):
                     self.l.stop_long[0] = self.l.stop_long_s[0]
 
 
+class MACDStopTrailer(bt.Indicator):
+    '''
+    data0: 保证同步 小周期
+    data1：计算止损 日线 大周期
+    MACD stop trailer.
+    If the slope of macd(diff) less than 0, trun to small stop trailer.
+    '''
+    lines = ('stop_long', 'stop_long_l', 'stop_long_s', 'macdHist')
+    plotinfo = dict(subplot=True, plotlinelabels=True)
+
+    plotlines = dict(
+        stop_long_l=dict(_plotskip='True',),
+        stop_long_s=dict(_plotskip='True',),
+        stop_long=dict(_plotskip='True', ),
+    )
+
+    params = dict(
+        atrPeriod=13,
+        stopeFactorL=3.0,
+        stopFactorS=1.5,
+    )
+
+    def __init__(self):
+        self.strat = self._owner  # alias for clarity
+
+        self.l.macdHist = self.macd_hist = bt.ind.MACDHisto(self.data1, period_me1=12, period_me2=26, period_signal=9)
+
+        self.l.atr = bt.ind.ATR(self.data1, period=self.p.atrPeriod)
+        self.stopDistL = self.l.atr * self.p.stopeFactorL
+        self.stopDistS = self.l.atr * self.p.stopFactorS
+
+        # Running stop price calc, applied in next according to market pos
+        self.s_l = self.data - self.stopDistL
+        self.s_s = self.data - self.stopDistS
+
+    def next(self):
+        # When entering the market, the stop has to be set
+        if self.strat.entering > 0:  # entering long
+            self.l.stop_long[0] = self.s_l[0]
+            self.l.stop_long_l[0] = self.s_l[0]
+            self.l.stop_long_s[0] = self.s_s[0]
+
+        else:  # In the market, adjust stop only in the direction of the trade
+            if self.strat.position.size > 0:
+                self.l.stop_long_l[0] = max(self.s_l[0], self.l.stop_long_l[-1])
+                self.l.stop_long_s[0] = max(self.s_s[0], self.l.stop_long_s[-1])
+
+                if self.macd_hist[0] > self.macd_hist[-1]:
+                    self.l.stop_long[0] = self.l.stop_long_l[0]
+                else:
+                    self.l.stop_long[0] = self.l.stop_long_s[0]
+
+
 class EMASlopeEntryPoint(bt.Indicator):
     lines = ('top_divergences', 'bottom_divergences', 'entryPoint', )
     plotinfo = dict(subplot=True, plotlinelabels=True)
 
     params = dict(
-        emaPeriod=26,
-        slopePeriod=5,
+        smaPeriod=26,
     )
 
     def __init__(self):
@@ -186,8 +238,7 @@ class EMASlopeEntryPoint(bt.Indicator):
         self.div_top_List = []
         self.div_bottom_List = []
 
-        self.ema = bt.ind.EMA(self.data, period=self.p.emaPeriod)
-        self.slope = bt.talib.LINEARREG_SLOPE(self.ema, self.p.slopePeriod)
+        self.sma = bt.talib.SMA(self.data, period=self.p.smaPeriod)
 
         for data in self.strat.datas:
             self.div_top_List.append(data.divergence_top)
@@ -197,7 +248,8 @@ class EMASlopeEntryPoint(bt.Indicator):
         self.l.entryPoint[0] = 0
 
         if self.buyTrend:
-            if self.data[0] > self.ema[0] and self.slope[0] > -0.01:
+            # 这里进入之后，需要判断拐头和交叉，如果没有，要退出
+            if self.data[0] > self.sma[0]:
                 self.buyTrend = False
                 self.l.entryPoint[0] = 1
             else:
@@ -211,22 +263,6 @@ class EMASlopeEntryPoint(bt.Indicator):
                     self.buyTrend = True
                     self.l.bottom_divergences[0] = 1
 
-
-        # if self.data[0] > self.ema[0] and self.slope[0] > 0:
-        #     if self.buyTrend:
-        #         self.buyTrend = False
-        #         self.l.entryPoint[0] = 1
-        # else:
-        #     if self.buyTrend:
-        #         for div_top in self.div_top_List:
-        #             if div_top[0] > 0:
-        #                 self.buyTrend = False
-        #                 self.l.top_divergences[0] = 1
-        #     else:
-        #         for div_bottom in self.div_bottom_List:
-        #             if div_bottom[0] > 0:
-        #                 self.buyTrend = True
-        #                 self.l.bottom_divergences[0] = 1
 
 
 class Divergence(bt.Indicator):
@@ -321,6 +357,8 @@ class St(bt.Strategy):
         self.ema26SlopeSlope1 = self.ema26SlopeSlope.slope_slope
         self.ema26SlopeSlope2 = self.ema26SlopeSlope.slope_slope_zero
 
+        self.sma26 = bt.talib.SMA(self.data2, timeperiod=26)
+
         # ATR
         self.atrDay = bt.ind.ATR(self.data2)
 
@@ -329,7 +367,7 @@ class St(bt.Strategy):
         self.entryPoint = self.test.entryPoint
 
         # stop price
-        self.testStopTrail = EMASlopeStopTrailer(self.data0, self.data2)
+        self.testStopTrail = MACDStopTrailer(self.data0, self.data2)
 
         self.exit_long = bt.ind.CrossDown(self.data,
                                           self.testStopTrail.stop_long, plotname='Exit Long')
