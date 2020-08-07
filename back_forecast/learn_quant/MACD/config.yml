@@ -1,0 +1,79 @@
+# config.yml
+base:
+  # 启动的策略文件路径
+#  strategy_file: Test_turtle.py
+  strategy_file: MACD.py
+  # 回测起始日期
+  start_date: 2019-01-05
+  # 回测结束日期(如果是实盘，则忽略该配置)
+  end_date: 2019-10-09
+  # 目前支持 `1d` (日线回测) 和 `1m` (分钟线回测)，如果要进行分钟线，请注意是否拥有对应的数据源，目前开源版本是不提供对应的数据源的。
+  frequency: 1m
+  # Benchmark，如果不设置，默认没有基准参照。
+#  benchmark: 000651.XSHE
+  benchmark: 000300.XSHG
+  run-type: b
+  # 在模拟交易和实盘交易中，RQAlpha支持策略的pause && resume，该选项表示开启 persist 功能呢，
+  # 其会在每个bar结束对进行策略的持仓、账户信息，用户的代码上线文等内容进行持久化
+  persist: false
+  persist_mode: real_time
+  accounts:
+    # 设置 股票为交易品种  初始资金为 100000 元
+    stock:  1000000
+extra:
+  # 开启日志输出
+  log_level: verbose
+mod:
+  sys_analyser:
+      enabled: True
+      # 开启 plot 功能
+      plot: True
+      record: True
+      output_file: ./result2.pkl
+      plot_save_file: ./result2.png
+#      report_save_path: D:\script\rqalpha\strategy\waveform\pendulum
+
+  sys_progress:
+    enabled: True
+    show: True
+
+  sys_simulation:
+    enabled: True
+    matching_type: current_bar  # 分钟模拟必须修改
+
+
+
+
+
+#config = {
+#  "base": {
+#    "strategy_file": "Test_pendulum4.py",
+#    "start_date": "2012-06-01",
+#    "end_date": "2019-08-21",
+#    "benchmark": "000300.XSHG",
+#    "frequency": "1d",
+#    "run-type": "b",
+#    "persist": False,
+#    "persist_mode": "real_time"
+#    "accounts": {
+#        "stock": 1000000
+#      }
+#  },
+#  "extra": {
+#    "log_level": "verbose",
+#  },
+#  "mod": {
+#    "sys_analyser": {
+#        "enabled": True,
+#        "report": True
+#        "plot": True,
+#        "output-file" : True,
+#        "report_save_path": "result.csv",
+#        "plot_save_file": "result.jpg",
+#      }
+#      "sys_progress": {
+#        "enabled": True,
+#        "show": True
+#      }
+#  },
+#}

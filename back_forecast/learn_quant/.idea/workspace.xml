@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="a74a35b5-d378-45dc-9afb-1751d4b8a792" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ProjectId" id="1dJ0XNM8uQtjSPhGtwaKuBMn5FT" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/MACD/MACD.py" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RunManager">
+    <configuration name="MACD" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="learn_quant" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\lnkyz\AppData\Local\Programs\Python\Python37\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/MACD" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MACD/MACD.py" />
+      <option name="PARAMETERS" value="rqalpha run" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <module name="learn_quant" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\lnkyz\AppData\Local\Programs\Python\Python37\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/MACD" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MACD/MACD.py" />
+      <option name="PARAMETERS" value="rqalpha run" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.MACD" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a74a35b5-d378-45dc-9afb-1751d4b8a792" name="Default Changelist" comment="" />
+      <created>1592127926442</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1592127926442</updated>
+      <workItem from="1592127927767" duration="5876000" />
+      <workItem from="1592309243999" duration="3149000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="734" y="355" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1592130115700">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="734" y="355" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.2560.1400/-1080.0.1080.1880@0.0.2560.1400" timestamp="1592130115700" />
+    <state x="1013" y="502" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1592129738719">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="1013" y="502" key="#com.intellij.fileTypes.FileTypeChooser/0.0.2560.1400/-1080.0.1080.1880@0.0.2560.1400" timestamp="1592129738719" />
+    <state x="1060" y="455" key="FileChooserDialogImpl" timestamp="1592130113096">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="1060" y="455" key="FileChooserDialogImpl/0.0.2560.1400/-1080.0.1080.1880@0.0.2560.1400" timestamp="1592130113096" />
+    <state width="2517" height="492" key="GridCell.Tab.0.bottom" timestamp="1592130369745">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2517" height="492" key="GridCell.Tab.0.bottom/0.0.2560.1400/-1080.0.1080.1880@0.0.2560.1400" timestamp="1592130369745" />
+    <state width="2517" height="492" key="GridCell.Tab.0.center" timestamp="1592130369745">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2517" height="492" key="GridCell.Tab.0.center/0.0.2560.1400/-1080.0.1080.1880@0.0.2560.1400" timestamp="1592130369745" />
+    <state width="2517" height="492" key="GridCell.Tab.0.left" timestamp="1592130369745">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2517" height="492" key="GridCell.Tab.0.left/0.0.2560.1400/-1080.0.1080.1880@0.0.2560.1400" timestamp="1592130369745" />
+    <state width="2517" height="492" key="GridCell.Tab.0.right" timestamp="1592130369745">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2517" height="492" key="GridCell.Tab.0.right/0.0.2560.1400/-1080.0.1080.1880@0.0.2560.1400" timestamp="1592130369745" />
+    <state width="2517" height="492" key="GridCell.Tab.1.bottom" timestamp="1592130369745">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2517" height="492" key="GridCell.Tab.1.bottom/0.0.2560.1400/-1080.0.1080.1880@0.0.2560.1400" timestamp="1592130369745" />
+    <state width="2517" height="492" key="GridCell.Tab.1.center" timestamp="1592130369745">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2517" height="492" key="GridCell.Tab.1.center/0.0.2560.1400/-1080.0.1080.1880@0.0.2560.1400" timestamp="1592130369745" />
+    <state width="2517" height="492" key="GridCell.Tab.1.left" timestamp="1592130369745">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2517" height="492" key="GridCell.Tab.1.left/0.0.2560.1400/-1080.0.1080.1880@0.0.2560.1400" timestamp="1592130369745" />
+    <state width="2517" height="492" key="GridCell.Tab.1.right" timestamp="1592130369745">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2517" height="492" key="GridCell.Tab.1.right/0.0.2560.1400/-1080.0.1080.1880@0.0.2560.1400" timestamp="1592130369745" />
+    <state x="781" y="342" key="SettingsEditor" timestamp="1592129338757">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="781" y="342" key="SettingsEditor/0.0.2560.1400/-1080.0.1080.1880@0.0.2560.1400" timestamp="1592129338757" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/MACD/MACD.py</url>
+          <line>141</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/learn_quant$MACD.coverage" NAME="MACD Coverage Results" MODIFIED="1592130314685" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/MACD" />
+  </component>
+</project>
