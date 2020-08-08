@@ -14,6 +14,7 @@ strategy:
         1.stop price
 '''
 import argparse
+import datetime
 
 import pandas as pd
 
@@ -72,6 +73,25 @@ class BuyTrailer(bt.Indicator):
         self.l.buyPoints[0] = 1
 
 
+class SellWrongTrailer(bt.Indicator):
+    line = ('buyPoints',)
+    plotinfo = dict(subplot=True, plotlinelabels=True)
+
+    def __init__(self):
+        self.strat = self._owner  # alias for clarity
+
+    def next(self):
+        self.l.buyPoints[0] = 0
+
+        if self.strat.position[-1].size > 0 and self.strat.position[0].size <= 0:
+            self.strat.sellProtectDays = self.strat.p.sellProtectDays
+            self.sellPrice = self.data[0]
+
+        if self.strat.sellProtectDays > 0:
+            if self.data[0] > self.sellPrice:
+                self.l.buyPoints[0] = 1
+
+
 class StopTrailer(bt.Indicator):
     _nextforce = True  # force system into step by step calcs
 
@@ -105,9 +125,25 @@ class St(bt.Strategy):
         stopfactor=3.0,  # actual stop distance for smoothed atr
         verbose=True,  # print out debug info
         samebar=True,  # close and re-open on samebar
+        when=bt.timer.SESSION_START,
+        timer=True,
+        cheat=False,
+        offset=datetime.timedelta(),
+        repeat=datetime.timedelta(),
+        weekdays=[],
+        buyProtectDays=5,
+        sellProtectDays=5,
     )
 
     def __init__(self):
+        # add a daily timer
+        if self.p.timer:
+            self.add_timer(
+                when=self.p.when,
+                offset=self.p.offset,
+                repeat=self.p.repeat,
+                weekdays=self.p.weekdays,
+            )
 
         self.buyPoints = BuyTrailer()
         self.stopPrice = StopTrailer()
@@ -115,10 +151,11 @@ class St(bt.Strategy):
         self.exit_long = bt.ind.CrossDown(self.data,
                                           self.stopPrice, plotname='Exit Long')
 
-
         self.order = None
         self.entering = None
         self.stop_large = True
+
+        self.sellProtectDays = 0
 
     def start(self):
         self.entering = 0
@@ -147,14 +184,20 @@ class St(bt.Strategy):
             self.log('Long Stop Price: {:.2f}, current price: {:.2f}', self.stopPrice[0], self.data[0])
             if self.exit_long > 0:
                 self.log('收到卖出信号')
-                # self.stats.trades
-                bt.order.OrderData
+
                 self.order = self.close()
         elif self.buyPoints[0] > 0:
             self.order = self.order_target_percent(target=0.99)
             if self.order:
                 self.entering = 1
                 self.stop_large = True
+
+    def notify_timer(self, timer, when, *args, **kwargs):
+        if self.sellProtectDays > 0:
+            self.sellProtectDays -= 1
+
+        print('strategy notify_timer with tid {}, when {} sellProtectDays {}'.
+              format(timer.p.tid, when, self.sellProtectDays))
 
     def notify_trade(self, trade):
         if trade.size > 0:
@@ -250,7 +293,7 @@ def parse_args():
                         help='Couple all lines of the indicator')
 
     parser.add_argument('--plot', required=False, action='store_true',
-                        default=True,
+                        default=False,
                         help=('Plot the result'))
 
     return parser.parse_args()
