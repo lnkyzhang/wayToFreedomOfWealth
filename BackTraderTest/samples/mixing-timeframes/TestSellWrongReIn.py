@@ -1,25 +1,7 @@
-'''
-strategy:
-    buy precondition:
-        1.macd gold cross
-        2.price beyond short SMA
-        3.short SMA trun up
-        4.not strict short sequence
-    after buy stop price:
-        1.in three days:
-            min of ATR stop price and buy price
-        2.out three days:
-            ATR stop price
-    sell condition:
-        1.stop price
-'''
 import argparse
 import datetime
-
 import pandas as pd
-
 import backtrader as bt
-
 
 
 
@@ -29,8 +11,6 @@ from BackTraderTest.BackTraderFunc.DataReadFromCsv import read_dataframe
 pd.set_option('display.max_rows', 5000)
 pd.set_option('display.max_columns', 100)
 pd.set_option('display.width', 300)
-
-
 
 
 
@@ -53,7 +33,9 @@ class BuyTrailer(bt.Indicator):
         self.longSma = bt.ind.SMA(self.data, period=self.p.smaLongPeriod)
 
         self.macd = bt.ind.MACD(self.data)
-        # goldCross = bt.ind.CrossUp(macd.macd, macd.signal)
+
+        # only come in one time
+        self.haveBuy = False
 
     def next(self):
         self.l.buyPoints[0] = 0
@@ -70,7 +52,9 @@ class BuyTrailer(bt.Indicator):
         if self.macd.macd[0] < self.macd.signal:
             return
 
-        self.l.buyPoints[0] = 1
+        if self.haveBuy is False:
+            self.haveBuy = True
+            self.l.buyPoints[0] = 1
 
 
 class SellWrongTrailer(bt.Indicator):
@@ -79,17 +63,32 @@ class SellWrongTrailer(bt.Indicator):
 
     def __init__(self):
         self.strat = self._owner  # alias for clarity
+        self.orderCountLast = 0
 
     def next(self):
         self.l.buyPoints[0] = 0
 
-        if self.strat.position[-1].size > 0 and self.strat.position[0].size <= 0:
-            self.strat.sellProtectDays = self.strat.p.sellProtectDays
-            self.sellPrice = self.data[0]
+        if len(self.strat.historyOrder) > self.orderCountLast:
+            self.orderCountLast = len(self.strat.historyOrder)
+
+            for orderDate in sorted(self.strat.historyOrder, reverse=True):
+                if self.strat.historyOrder[orderDate]['size'] < 0:
+                    self.strat.sellProtectDays = self.strat.p.sellProtectDays
+                    self.sellPrice = self.data[0]
 
         if self.strat.sellProtectDays > 0:
             if self.data[0] > self.sellPrice:
                 self.l.buyPoints[0] = 1
+
+
+        # if self.strat.positions[-1].size > 0 and self.strat.positions[0].size <= 0:
+        #     pass
+        #     self.strat.sellProtectDays = self.strat.p.sellProtectDays
+        #     self.sellPrice = self.data[0]
+        #
+        # if self.strat.sellProtectDays > 0:
+        #     if self.data[0] > self.sellPrice:
+        #         self.l.buyPoints[0] = 1
 
 
 class StopTrailer(bt.Indicator):
@@ -118,6 +117,7 @@ class StopTrailer(bt.Indicator):
             self.l.stopPrice[0] = max(self.s_s[0], self.l.stopPrice[-1])
 
 
+
 class St(bt.Strategy):
     params = dict(
         atrperiod=14,  # measure volatility over x days
@@ -132,7 +132,7 @@ class St(bt.Strategy):
         repeat=datetime.timedelta(),
         weekdays=[],
         buyProtectDays=5,
-        sellProtectDays=50,
+        sellProtectDays=5,
     )
 
     def __init__(self):
@@ -151,11 +151,15 @@ class St(bt.Strategy):
         self.exit_long = bt.ind.CrossDown(self.data,
                                           self.stopPrice, plotname='Exit Long')
 
+        self.sellWrongRebuy = SellWrongTrailer()
+
         self.order = None
         self.entering = None
         self.stop_large = True
 
         self.sellProtectDays = 0
+
+        self.historyOrder = {}
 
     def start(self):
         self.entering = 0
@@ -191,6 +195,11 @@ class St(bt.Strategy):
             if self.order:
                 self.entering = 1
                 self.stop_large = True
+        elif self.sellWrongRebuy.buyPoints[0] > 0:
+            self.log("买错了 买入")
+            self.order = self.order_target_percent(target=0.99)
+            if self.order:
+                self.entering = 1
 
     def notify_timer(self, timer, when, *args, **kwargs):
         if self.sellProtectDays > 0:
@@ -208,6 +217,19 @@ class St(bt.Strategy):
             self.log('Trade PNL: {:.2f}', trade.pnlcomm)
 
     def notify_order(self, order):
+        if not order.alive():
+            # record order
+
+            orderDetail = {}
+            orderDetail['size'] = order.executed.size * 1 if order.isbuy() else -1
+            orderDetail['price'] = order.executed.price
+            self.historyOrder[self.data.num2date(order.executed.dt).date()] = orderDetail
+
+            # print(','.join(str(x) for x in
+            #                (self.data.num2date(order.executed.dt).date(),
+            #                 order.executed.size * 1 if order.isbuy() else -1,
+            #                 order.executed.price)))
+
         if order.status in [bt.Order.Submitted, bt.Order.Accepted]:
             return  # Await further notifications
 
