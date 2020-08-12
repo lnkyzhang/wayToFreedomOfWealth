@@ -74,7 +74,14 @@ class SellWrongTrailer(bt.Indicator):
             for orderDate in sorted(self.strat.historyOrder, reverse=True):
                 if self.strat.historyOrder[orderDate]['size'] < 0:
                     self.strat.sellProtectDays = self.strat.p.sellProtectDays
-                    self.sellPrice = self.data[0]
+                    if self.strat.lastBuyState is 'buyPoint':
+                        self.sellPrice = self.strat.historyOrder[orderDate]['price']
+                    elif self.strat.lastBuyState is 'sellWrong':
+                        if self.strat.historyOrder[orderDate]['price'] > self.sellPrice:
+                            self.sellPrice = self.strat.historyOrder[orderDate]['price']
+                    print("sell price %f" % (self.sellPrice))
+                # only come in once (get the last date)
+                break
 
         if self.strat.sellProtectDays > 0:
             if self.data[0] > self.sellPrice:
@@ -132,7 +139,7 @@ class St(bt.Strategy):
         repeat=datetime.timedelta(),
         weekdays=[],
         buyProtectDays=5,
-        sellProtectDays=5,
+        sellProtectDays=500,
     )
 
     def __init__(self):
@@ -163,6 +170,7 @@ class St(bt.Strategy):
 
     def start(self):
         self.entering = 0
+        self.lastBuyState = ""
         self.start_val = self.broker.get_value()
 
     def next(self):
@@ -195,11 +203,17 @@ class St(bt.Strategy):
             if self.order:
                 self.entering = 1
                 self.stop_large = True
+                self.lastBuyState = "buyPoint"
+                self.sellProtectDays = 0
+
         elif self.sellWrongRebuy.buyPoints[0] > 0:
-            self.log("买错了 买入")
+            self.log("卖错了 买入 current price %f "%(self.data[0]))
             self.order = self.order_target_percent(target=0.99)
             if self.order:
                 self.entering = 1
+                self.lastBuyState = "sellWrong"
+                self.sellProtectDays = 0
+
 
     def notify_timer(self, timer, when, *args, **kwargs):
         if self.sellProtectDays > 0:
@@ -224,6 +238,7 @@ class St(bt.Strategy):
             orderDetail['size'] = order.executed.size * 1 if order.isbuy() else -1
             orderDetail['price'] = order.executed.price
             self.historyOrder[self.data.num2date(order.executed.dt).date()] = orderDetail
+
 
             # print(','.join(str(x) for x in
             #                (self.data.num2date(order.executed.dt).date(),
@@ -315,7 +330,7 @@ def parse_args():
                         help='Couple all lines of the indicator')
 
     parser.add_argument('--plot', required=False, action='store_true',
-                        default=False,
+                        default=True,
                         help=('Plot the result'))
 
     return parser.parse_args()
