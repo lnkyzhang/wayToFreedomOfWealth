@@ -1,5 +1,7 @@
 import backtrader as bt
 
+from BackTraderTest.BackTraderFunc.Indicator.PectRankAbsInd import PercentRankAbs
+
 '''
 布林带仓位管理
 '''
@@ -196,6 +198,7 @@ class MACDBiasPositionManager(bt.Indicator):
         self.l.macdsignal = self.macd.signal
         self.l.macdhist = self.macd.histo
 
+        # self.pctRank = PercentRankAbs(self.l.macdsignal, period=200)
         self.pctRank = bt.ind.PercentRank(self.l.macdsignal, period=200)
         # self.macdhistSlope = bt.talib.LINEARREG_SLOPE(self.l.macdhist, timeperiod=2)
 
@@ -204,8 +207,8 @@ class MACDBiasPositionManager(bt.Indicator):
         卖出：20日EMA或20日SMA任一个拐头向下
         买入：20日EMA或20日SMA全部拐头向上
         '''
-        # if self.pctRank[0] > 0.95:
-        #     print("date %s, pctRank %f, diff :%f", self.data.datetime.date(0).isoformat(), self.pctRank[0], self.l.macdsignal[0])
+        if self.pctRank[0] > 0.95:
+            print("date %s, pctRank %f, diff :%f", self.data.datetime.date(0).isoformat(), self.pctRank[0], self.l.macdsignal[0])
 
         if self.data.datetime.date(0).isoformat() < '2015-04-17':
             return

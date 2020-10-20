@@ -43,7 +43,7 @@ from BackTraderTest.BackTraderFunc.Indicator.PositionManger import BollPositionM
 from BackTraderTest.BackTraderFunc.Indicator.StopTrailer import StopTrailer
 from BackTraderTest.BackTraderFunc.MacdDivergence import macd_extend_data
 from BackTraderTest.BackTraderFunc.St_TripleScreen import TripleScreen_extend_data
-from BackTraderTest.BackTraderFunc.makeData import QAIndex2btData, QAStock2btData
+from BackTraderTest.BackTraderFunc.makeData import QAIndex2btData, QAStock2btData, QAStock2btDataOnline
 from back_forecast.learn_quant.MACD.jukuan_macd_signal import *
 
 import talib
@@ -418,7 +418,8 @@ def runstrat():
     #                                       divergence_bottom=temp_df.columns.to_list().index('divergence_bottom')))
 
     # dataframe = QAIndex2btData("512000", '2017-01-01', '2020-10-13')
-    dataframe = QAStock2btData("000651", '2014-01-01', '2020-10-13')
+    # dataframe = QAStock2btData("000651", '2014-01-01', '2020-10-13')
+    dataframe = read_dataframe('000651.csv', '2014-2020', ['d'])[0]
     cerebro.adddata(bt.feeds.PandasData(dataname=dataframe))
 
     cerebro.addstrategy(St)
