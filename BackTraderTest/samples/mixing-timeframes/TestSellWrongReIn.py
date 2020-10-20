@@ -208,7 +208,7 @@ class St(bt.Strategy):
 
         elif self.sellWrongRebuy.buyPoints[0] > 0:
             self.log("卖错了 买入 current price %f "%(self.data[0]))
-            self.order = self.order_target_percent(target=0.99)
+            self.order = self.order_target_percent(target=0.99, price=self.data[0],exectype=bt.Order.Limit)
             if self.order:
                 self.entering = 1
                 self.lastBuyState = "sellWrong"

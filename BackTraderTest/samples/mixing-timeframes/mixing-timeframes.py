@@ -37,6 +37,9 @@ from backtrader.analyzers import TimeReturn, Transactions
 
 from BackTraderTest.BackTraderFunc.DataReadFromCsv import read_dataframe
 from BackTraderTest.BackTraderFunc.DataResample import data_min_resample
+from BackTraderTest.BackTraderFunc.Indicator.EntryMacdDivergence import MACDEMAEntryPoint
+from BackTraderTest.BackTraderFunc.Indicator.PositionManger import BollPositionManager
+from BackTraderTest.BackTraderFunc.Indicator.StopTrailer import StopTrailer
 from BackTraderTest.BackTraderFunc.MacdDivergence import macd_extend_data
 from BackTraderTest.BackTraderFunc.St_TripleScreen import TripleScreen_extend_data
 from back_forecast.learn_quant.MACD.jukuan_macd_signal import *
@@ -65,55 +68,6 @@ class pandas_tripleScreen(bt.feeds.PandasData):
     # openinterest in GenericCSVData has index 7 ... add 1
     # add the parameter to the parameters inherited from the base class
     params = (('buyPoint', 15),)
-
-
-
-class StopTrailer(bt.Indicator):
-    _nextforce = True  # force system into step by step calcs
-
-    lines = ('stop_long', 'stop_long_l', 'stop_long_s')
-    plotinfo = dict(subplot=False, plotlinelabels=True)
-
-    params = dict(
-        atrperiod=14,
-        emaperiod=10,
-        stopfactor=3.0,
-    )
-
-    def __init__(self):
-        self.strat = self._owner  # alias for clarity
-
-        # Volatility which determines stop distance
-        atr = bt.ind.ATR(self.data, period=self.p.atrperiod)
-        emaatr = bt.ind.EMA(atr, period=self.p.emaperiod)
-        self.stop_dist = emaatr * self.p.stopfactor
-
-        # Running stop price calc, applied in next according to market pos
-        # self.s_l = self.data - self.stop_dist
-        # self.s_s = self.data + self.stop_dist
-
-        self.s_l = self.data * 0.85
-        self.s_s = self.data * 0.90
-
-        self.lastLarge = True
-
-    def next(self):
-        # When entering the market, the stop has to be set
-        if self.strat.entering > 0:  # entering long
-            self.strat.entering = 0
-            self.l.stop_long[0] = self.s_l[0]
-            self.l.stop_long_l[0] = self.s_l[0]
-            self.l.stop_long_s[0] = self.s_s[0]
-
-        else:  # In the market, adjust stop only in the direction of the trade
-            if self.strat.position.size > 0:
-                self.l.stop_long_l[0] = max(self.s_l[0], self.l.stop_long_l[-1])
-                self.l.stop_long_s[0] = max(self.s_s[0], self.l.stop_long_s[-1])
-
-                if self.strat.stop_large:
-                    self.l.stop_long[0] = self.l.stop_long_l[0]
-                else:
-                    self.l.stop_long[0] = self.l.stop_long_s[0]
 
 
 class EMASlopeStopTrailer(bt.Indicator):
@@ -313,7 +267,7 @@ class St(bt.Strategy):
     params = dict(
         atrperiod=14,  # measure volatility over x days
         emaperiod=10,  # smooth out period for atr volatility
-        stopfactor=3.0,  # actual stop distance for smoothed atr
+        stopfactor=18.0,  # actual stop distance for smoothed atr
         verbose=True,  # print out debug info
         samebar=True,  # close and re-open on samebar
     )
@@ -344,33 +298,38 @@ class St(bt.Strategy):
         # self.volumeSlope5 = bt.talib.LINEARREG_SLOPE(self.data2.volume, 5)
 
         # 均线
-        self.ema13 = bt.ind.EMA(self.data2, period=13)
-        self.ema26 = bt.talib.EMA(self.data2, period=26)
-        self.ema60 = bt.ind.EMA(self.data2, period=60)
+        self.ema20 = bt.ind.EMA(self.data2, period=20)
+        # self.ema26 = bt.talib.EMA(self.data2, period=26)
+        # self.ema60 = bt.ind.EMA(self.data2, period=60)
 
-        self.ema13Slope = bt.talib.LINEARREG_SLOPE(self.ema13, 5)
-        self.ema26Slope = bt.talib.LINEARREG_SLOPE(self.ema26, 5)
-        self.ema60Slope = bt.talib.LINEARREG_SLOPE(self.ema60, 5)
+        # self.ema13Slope = bt.talib.LINEARREG_SLOPE(self.ema13, 5)
+        # self.ema26Slope = bt.talib.LINEARREG_SLOPE(self.ema26, 5)
+        # self.ema60Slope = bt.talib.LINEARREG_SLOPE(self.ema60, 5)
+        #
+        # self.ema26SlopeSlope = SlopeSlope(self.data2, period=5)
+        #
+        # self.ema26SlopeSlope1 = self.ema26SlopeSlope.slope_slope
+        # self.ema26SlopeSlope2 = self.ema26SlopeSlope.slope_slope_zero
 
-        self.ema26SlopeSlope = SlopeSlope(self.data2, period=5)
-
-        self.ema26SlopeSlope1 = self.ema26SlopeSlope.slope_slope
-        self.ema26SlopeSlope2 = self.ema26SlopeSlope.slope_slope_zero
-
-        self.sma26 = bt.talib.SMA(self.data2, timeperiod=26)
+        self.sma20 = bt.talib.SMA(self.data2, timeperiod=20)
+        # self.sma60 = bt.talib.SMA(self.data2, timeperiod=60)
+        # self.sma120 = bt.talib.SMA(self.data2, timeperiod=120)
 
         # ATR
         self.atrDay = bt.ind.ATR(self.data2)
 
         # TestNewIndicator
-        self.test = EMASlopeEntryPoint(self.data2)
+        self.test = MACDEMAEntryPoint(self.data2)
         self.entryPoint = self.test.entryPoint
 
         # stop price
         self.testStopTrail = MACDStopTrailer(self.data0, self.data2)
 
         self.exit_long = bt.ind.CrossDown(self.data,
-                                          self.testStopTrail.stop_long, plotname='Exit Long')
+                                          self.stoptrailer.stop_long, plotname='Exit Long')
+
+        # 布林带测试
+        self.bollPosition = BollPositionManager(self.data2)
 
 
 
@@ -379,6 +338,7 @@ class St(bt.Strategy):
         self.order = None
         self.entering = None
         self.stop_large = True
+
 
     def start(self):
         self.entering = 0
@@ -403,11 +363,11 @@ class St(bt.Strategy):
 
         # self.entering = 0
         closing = None
-        if self.position.size > 0 and self.entering == 0:  # In the market - Long
-            self.log('Long Stop Price: {:.2f}, current price: {:.2f}', self.stoptrailer.stop_long[0], self.data[0])
-            if self.exit_long > 0:
-                self.log('收到卖出信号')
-                self.order = self.close()
+        # if self.position.size > 0 and self.entering == 0:  # In the market - Long
+        #     self.log('Long Stop Price: {:.2f}, current price: {:.2f}', self.stoptrailer.stop_long[0], self.data[0])
+        #     if self.exit_long > 0:
+        #         self.log('收到卖出信号')
+        #         self.order = self.close()
         # elif self.macdDivergence.top_divergences[0] > 0:
         #     self.order = self.order_target_percent(target=1.0)
         #     if self.order:
@@ -417,11 +377,22 @@ class St(bt.Strategy):
         #     if self.order:
         #         self.entering = 1
         #         self.stop_large = True
-        elif self.entryPoint[0] > 0:
-            self.order = self.order_target_percent(target=0.99)
-            if self.order:
-                self.entering = 1
-                self.stop_large = True
+        # elif self.testIndicate15min.bottom_divergences[0] > 0:
+        #     self.order = self.order_target_percent(target=0.99)
+        #     if self.order:
+        #         self.entering = 1
+        #         self.stop_large = True
+        # elif self.entryPoint[0] > 0:
+        #     self.order = self.order_target_percent(target=0.99)
+        #     if self.order:
+        #         self.entering = 1
+        #         self.stop_large = True
+
+        self.order = self.order_target_percent(target=self.bollPosition.PositionPercent[0])
+
+
+
+
 
     def notify_trade(self, trade):
         if trade.size > 0:
@@ -508,10 +479,10 @@ def parse_args():
         description='Sample for pivot point and cross plotting')
 
     parser.add_argument('--data', required=False,
-                        default='000651.csv',
+                        default='002594.csv',
                         help='Data to be read in')
 
-    parser.add_argument('--years', default='2015-2017',
+    parser.add_argument('--years', default='2015-2020',
                         help='Formats: YYYY-ZZZZ / YYYY / YYYY- / -ZZZZ')
 
     parser.add_argument('--multi', required=False, action='store_true',

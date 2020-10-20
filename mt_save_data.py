@@ -68,7 +68,7 @@ def mt_save_financial_from_JQData(stk, start_date, end_date):
         start_dt += delta
 
 def TestGetMinDataFromJQdata():
-    df = get_bars('000651.XSHE', 1000000, unit='5m', fields=['date', 'open', 'high', 'low', 'close', 'volume', 'factor'])
+    df = get_bars('000002.XSHE', 1000000, unit='5m', fields=['date', 'open', 'high', 'low', 'close', 'volume', 'factor'])
     df.to_csv("格力5min")
 
 if __name__ == '__main__':

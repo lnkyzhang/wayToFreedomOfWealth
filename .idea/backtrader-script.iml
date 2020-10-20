@@ -5,15 +5,11 @@
       <sourceFolder url="file://$MODULE_DIR$/back_forecast/learn_quant/MACD" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/back_forecast/learn_quant" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.7" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.7 (2)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PackageRequirementsSettings">
     <option name="requirementsPath" value="" />
-  </component>
-  <component name="PyDocumentationSettings">
-    <option name="format" value="REST" />
-    <option name="myDocStringFormat" value="reStructuredText" />
   </component>
   <component name="TestRunnerService">
     <option name="PROJECT_TEST_RUNNER" value="pytest" />
