@@ -200,6 +200,8 @@ class MACDBiasPositionManager(bt.Indicator):
 
         # self.pctRank = PercentRankAbs(self.l.macdsignal, period=200)
         self.pctRank = bt.ind.PercentRank(self.l.macdsignal, period=200)
+        self.lowestHist = bt.ind.Lowest(self.l.macdhist, period=200)
+        self.lowestDiff = bt.ind.Lowest (self.l.macdsignal, period=200)
         # self.macdhistSlope = bt.talib.LINEARREG_SLOPE(self.l.macdhist, timeperiod=2)
 
     def next(self):
@@ -208,7 +210,7 @@ class MACDBiasPositionManager(bt.Indicator):
         买入：20日EMA或20日SMA全部拐头向上
         '''
         if self.pctRank[0] > 0.95:
-            print("date %s, pctRank %f, diff :%f", self.data.datetime.date(0).isoformat(), self.pctRank[0], self.l.macdsignal[0])
+            print("date %s, pctRank %f, diff :%f, lowest hist: %f, lowest diff:%f", self.data.datetime.date(0).isoformat(), self.pctRank[0], self.l.macdsignal[0], self.lowestHist[0],self.lowestDiff[0])
 
         if self.data.datetime.date(0).isoformat() < '2015-04-17':
             return
@@ -229,7 +231,7 @@ class MACDBiasPositionManager(bt.Indicator):
                 self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
                 self.l.PositionPercent[0] = 0
 
-        elif self.l.macdhist[0] > self.l.macdhist[-1] > -0.1 and self.l.macdsignal > -1:
+        elif self.l.macdhist[0] > self.l.macdhist[-1] > self.lowestHist / 4 and self.l.macdsignal > self.lowestDiff / 4:
                 # 20日的ema和sma全部拐头向上
                 self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
                 self.l.PositionPercent[0] = 0.99
