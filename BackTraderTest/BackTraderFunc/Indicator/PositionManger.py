@@ -1,4 +1,5 @@
 import backtrader as bt
+import sympy
 
 from BackTraderTest.BackTraderFunc.Indicator.PectRankAbsInd import PercentRankAbs
 
@@ -204,6 +205,31 @@ class MACDBiasPositionManager(bt.Indicator):
         self.lowestDiff = bt.ind.Lowest (self.l.macdsignal, period=200)
         # self.macdhistSlope = bt.talib.LINEARREG_SLOPE(self.l.macdhist, timeperiod=2)
 
+    def solveDiff(lastDea, hist, N):
+        '''
+        根据macd 反推 diff
+        :param lastDea:上一个dea
+        :param hist:需要的hist
+        :param N:周期
+        :return:
+        '''
+        x = sympy.symbols('x')
+        return sympy.solve(x - ((2 * x + ((N - 1) * lastDea)) / (N + 1)) - hist, x)
+
+    def solvePrice(lastShortEma, lastLongEma, diff, shortN, longN):
+        '''
+        根据macd 反推 price
+        :param lastShortEma:上一个短期ema
+        :param lastLongEma:上一个长期ema
+        :param diff:计算的diff
+        :param shortN:短期周期
+        :param longN:长期周期
+        :return:
+        '''
+        x = sympy.symbols('x')
+        return sympy.solve(((2 * x + ((shortN - 1) * lastShortEma)) / (shortN + 1)) - (
+                    (2 * x + ((longN - 1) * lastLongEma)) / (longN + 1)) - diff, x)
+
     def next(self):
         '''
         卖出：20日EMA或20日SMA任一个拐头向下
@@ -231,8 +257,18 @@ class MACDBiasPositionManager(bt.Indicator):
                 self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
                 self.l.PositionPercent[0] = 0
 
+        # elif self.l.macdhist[0] > self.l.macdhist[-1] > self.lowestHist / 4 and self.l.macdsignal > self.lowestDiff / 4:
+        #         # 20日的ema和sma全部拐头向上
+        #         self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
+        #         self.l.PositionPercent[0] = 0.99
         elif self.l.macdhist[0] > self.l.macdhist[-1] > self.lowestHist / 4 and self.l.macdsignal > self.lowestDiff / 4:
                 # 20日的ema和sma全部拐头向上
+                self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
+                self.l.PositionPercent[0] = 0.99
+        elif self.l.macdhist[0] < self.l.macdhist[-1] > self.lowestHist / 4 and self.l.macdsignal > self.lowestDiff / 4:
+                # 20日的ema和sma全部拐头向上
+                needDiff = self.solveDiff(self.l.macdsignal[0] - self.l.macdhist[0], self.l.macdhist[0] + 0.025, 9)
+
                 self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
                 self.l.PositionPercent[0] = 0.99
         else:
