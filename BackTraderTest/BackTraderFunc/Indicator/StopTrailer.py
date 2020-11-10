@@ -40,6 +40,7 @@ class StopTrailer(bt.Indicator):
                 self.l.stop_long[0] = max(self.s_l[0], self.l.stop_long[-1])
 
 
+
 '''
 动态止损
 '''

@@ -1,14 +1,19 @@
 import backtrader as bt
 import sympy
+from math import fsum
+
+from backtrader.indicators import BaseApplyN
 
 from BackTraderTest.BackTraderFunc.Indicator.PectRankAbsInd import PercentRankAbs
+from BackTraderTest.BackTraderFunc.Indicator.StopTrailer import StopTrailer
 
 '''
 布林带仓位管理
 '''
-class BollPositionManager(bt.Indicator):
 
-    lines = ('PositionPercent', )
+
+class BollPositionManager(bt.Indicator):
+    lines = ('PositionPercent',)
     plotinfo = dict(subplot=True, plotlinelabels=True)
 
     params = dict(
@@ -39,7 +44,6 @@ class BollPositionManager(bt.Indicator):
         elif curRelPos == 2:
             self.l.PositionPercent[0] = 0
 
-
     def relativePosition(self):
         '''
         相对布林带的相对位置
@@ -53,12 +57,14 @@ class BollPositionManager(bt.Indicator):
         else:
             return 2
 
+
 '''
 均线仓位管理
 低于均线清仓，高于均线满仓
 '''
-class SMAPositionManager(bt.Indicator):
 
+
+class SMAPositionManager(bt.Indicator):
     lines = ('PositionPercent', 'OrderPrice', 'sma20Slope', 'ema20Slope')
     plotinfo = dict(subplot=True, plotlinelabels=True)
 
@@ -91,7 +97,6 @@ class SMAPositionManager(bt.Indicator):
             self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
             self.l.PositionPercent[0] = 0.99
 
-
         '''
         卖出：20日EMA拐头向下
         买入：20日EMA拐头向上
@@ -109,9 +114,10 @@ class SMAPositionManager(bt.Indicator):
 '''
 macd和ema的
 '''
-class MACDSMAPositionManager(bt.Indicator):
 
-    lines = ('PositionPercent', 'OrderPrice', 'sma20Slope', 'ema20Slope', 'macd','macdsignal', 'macdhist')
+
+class MACDSMAPositionManager(bt.Indicator):
+    lines = ('PositionPercent', 'OrderPrice', 'sma20Slope', 'ema20Slope', 'macd', 'macdsignal', 'macdhist')
     plotinfo = dict(subplot=True, plotlinelabels=True)
 
     params = dict(
@@ -129,7 +135,7 @@ class MACDSMAPositionManager(bt.Indicator):
         self.l.ema20Slope = self.ema20Slope = bt.talib.LINEARREG_SLOPE(self.ema20, timeperiod=2) * 100
         self.sma60Slope = bt.talib.LINEARREG_SLOPE(self.sma60, 1)
 
-        self.macd = bt.ind.MACDHisto(self.data, period_me1=20,period_me2=60,period_signal=9)
+        self.macd = bt.ind.MACDHisto(self.data, period_me1=20, period_me2=60, period_signal=9)
         self.l.macd = self.macd.macd
         self.l.macdsignal = self.macd.signal
         self.l.macdhist = self.macd.histo
@@ -142,19 +148,18 @@ class MACDSMAPositionManager(bt.Indicator):
         '''
         if self.data.datetime.date(0).isoformat() == '2016-02-19':
             print("123123")
-        if self.strat.position.size > 0 :
+        if self.strat.position.size > 0:
             if self.l.macdhist[0] < self.l.macdhist[-1] > 0:
                 # 20日的ema和sma有一个拐头向下
                 self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
                 self.l.PositionPercent[0] = 0
 
         elif self.l.macdhist[0] > self.l.macdhist[-1] > -0.1 and self.l.macdsignal > -1:
-                # 20日的ema和sma全部拐头向上
-                self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
-                self.l.PositionPercent[0] = 0.99
+            # 20日的ema和sma全部拐头向上
+            self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
+            self.l.PositionPercent[0] = 0.99
         else:
             self.l.PositionPercent[0] = -1
-
 
         '''
         卖出：20日EMA拐头向下
@@ -170,17 +175,37 @@ class MACDSMAPositionManager(bt.Indicator):
         #     self.l.PositionPercent[0] = 0.99
 
 
-
 '''
 增加乖离率
 '''
-class MACDBiasPositionManager(bt.Indicator):
 
-    lines = ('PositionPercent', 'OrderPrice', 'sma20Slope', 'ema20Slope', 'macd','macdsignal', 'macdhist')
+
+class MACDBiasPositionManager(bt.Indicator):
+    # lines = ('holdState', 'pctAtrPrice','PositionPercent', 'OrderPrice', 'sma20Slope', 'ema20Slope', 'macd', 'macdsignal', 'macdhist', 'macdlong',
+    #          'macdlongsignal', 'macdlonghist', 'nextlevel', 'stop_long', )
+    '''
+    macdHistMoveRank: macd 柱线图 中，当日值与前日值的差值，统计并排名
+    '''
+    lines = ('holdState', 'natr','PositionPercent', 'OrderPrice', 'macd', 'macdsignal', 'macdhist', 'stop_long', 'natrRank', 'shortbiasrank', 'longbiasrank', 'macdHistMoveRank', 'jxml')
     plotinfo = dict(subplot=True, plotlinelabels=True)
+
+    plotlines = dict(
+        stop_long=dict(_plotskip='True',),
+        OrderPrice=dict(_plotskip='True',),
+        PositionPercent=dict(_plotskip='True', ),
+        holdState=dict(_plotskip='True', ),
+        natr=dict(_plotskip='True', ),
+        macdsignal=dict(_plotskip='True', ),
+        macd=dict(_plotskip='True', ),
+        macdHistMoveRank=dict(_plotskip='True', ),
+        # macdhist=dict( _method='bar',),
+        # pctAtrPrice=dict(_plotskip='True', ),
+    )
 
     params = dict(
         period=20,
+        name='',
+        msrThresholdValue=0.99, # macdsignalRank的阈值
     )
 
     def __init__(self):
@@ -190,20 +215,51 @@ class MACDBiasPositionManager(bt.Indicator):
         self.sma20 = bt.talib.SMA(self.data, timeperiod=self.p.period)
         self.ema20 = bt.talib.EMA(self.data, timeperiod=self.p.period)
         self.sma60 = bt.talib.SMA(self.data, timeperiod=60)
-        self.l.sma20Slope = self.sma20Slope = bt.talib.LINEARREG_SLOPE(self.sma20, timeperiod=2) * 100
-        self.l.ema20Slope = self.ema20Slope = bt.talib.LINEARREG_SLOPE(self.ema20, timeperiod=2) * 100
-        self.sma60Slope = bt.talib.LINEARREG_SLOPE(self.sma60, 1)
+        self.ema60 = bt.talib.EMA(self.data, timeperiod=60)
+        self.sma120 = bt.talib.SMA(self.data, timeperiod=120)
+        self.ema120 = bt.talib.EMA(self.data, timeperiod=120)
 
-        self.macd = bt.ind.MACDHisto(self.data, period_me1=20,period_me2=60,period_signal=9)
+        # self.l.sma20Slope = self.sma20Slope = bt.talib.LINEARREG_SLOPE(self.sma20, timeperiod=2) * 100
+        # self.l.ema20Slope = self.ema20Slope = bt.talib.LINEARREG_SLOPE(self.ema20, timeperiod=2) * 100
+        # self.sma60Slope = bt.talib.LINEARREG_SLOPE(self.sma60, 1)
+        # self.ema120Slope = bt.talib.LINEARREG_SLOPE(self.ema120, 2)
+
+        self.macd = bt.ind.MACDHisto(self.data, period_me1=20, period_me2=60, period_signal=9)
         self.l.macd = self.macd.macd
         self.l.macdsignal = self.macd.signal
         self.l.macdhist = self.macd.histo
+        # self.l.macdhistobool = bt.ind.CrossOver(self.macd.histo, 0)
+        self.l.macdHistMoveRank = bt.ind.PercentRank(abs(bt.ind.UpMove(self.l.macdhist)), period=144)
+
+        self.macdlong = bt.ind.MACDHisto(self.data, period_me1=20, period_me2=120, period_signal=9)
+        # self.macdlong = self.macdlong.macd
+        # self.macdlongsignal = self.macdlong.signal
+        # self.macdlonghist = self.macdlong.histo
+        # self.l.macdlonghistobool = bt.ind.CrossOver(self.macdlonghist,0)
 
         # self.pctRank = PercentRankAbs(self.l.macdsignal, period=200)
-        self.pctRank = bt.ind.PercentRank(self.l.macdsignal, period=200)
-        self.lowestHist = bt.ind.Lowest(self.l.macdhist, period=200)
-        self.lowestDiff = bt.ind.Lowest (self.l.macdsignal, period=200)
+        self.l.shortbiasrank = bt.ind.PercentRank(abs(self.l.macdsignal), period=144)
+        self.l.longbiasrank = bt.ind.PercentRank(abs(self.macdlong.signal), period=144)
+
+
+        self.lowestHist = bt.ind.Lowest(self.l.macdhist, period=144)
+        self.lowestDiff = bt.ind.Lowest(self.l.macdsignal, period=144)
         # self.macdhistSlope = bt.talib.LINEARREG_SLOPE(self.l.macdhist, timeperiod=2)
+
+        self.pctATR = bt.ind.ATR(self.data)
+        self.riskLevel = 0
+
+        self.l.natr = bt.talib.NATR(self.data.high, self.data.low, self.data.close)
+        self.l.natrRank = bt.ind.PercentRank(self.l.natr, period=144)
+
+        # 均线密集计算
+        self.l.jxmj = JXMJIndicator(self.data)
+
+        # 止损
+        atr = bt.ind.ATR(self.data, period=14)
+        emaatr = bt.ind.EMA(atr, period=10)
+        self.stop_dist = emaatr * 10
+        self.s_l = self.data - self.stop_dist
 
     def solveDiff(lastDea, hist, N):
         '''
@@ -228,66 +284,299 @@ class MACDBiasPositionManager(bt.Indicator):
         '''
         x = sympy.symbols('x')
         return sympy.solve(((2 * x + ((shortN - 1) * lastShortEma)) / (shortN + 1)) - (
-                    (2 * x + ((longN - 1) * lastLongEma)) / (longN + 1)) - diff, x)
+                (2 * x + ((longN - 1) * lastLongEma)) / (longN + 1)) - diff, x)
+
+    def solveShortMidCrossPrice(self, shortSMA, shortEndData, shortN,midSMA, midEndData,midN):
+        '''
+        推算sma20和sma60交叉时的价格
+        :param shortEMA:
+        :param shortEndData:
+        :param shortN:
+        :param midEMA:
+        :param minEndData:
+        :param midN:
+        :return:
+        '''
+        x = sympy.symbols('x')
+        return sympy.solve(shortSMA + (x / shortN) - (shortEndData / shortN) - midSMA - (x / midN) + (midEndData / midN) , x)
 
     def next(self):
         '''
         卖出：20日EMA或20日SMA任一个拐头向下
         买入：20日EMA或20日SMA全部拐头向上
         '''
-        if self.pctRank[0] > 0.95:
-            print("date %s, pctRank %f, diff :%f, lowest hist: %f, lowest diff:%f", self.data.datetime.date(0).isoformat(), self.pctRank[0], self.l.macdsignal[0], self.lowestHist[0],self.lowestDiff[0])
+        if self.l.shortbiasrank[0] > 0.5:
+            print("name: %5s, date: %s, macdsignalRank: %.3f, diff :%.3f, lowest hist: %.3f, lowest diff:%.3f natr:%.3f, atrPctRank: %.3f"
+                  %(self.p.name, self.data.datetime.date(0).isoformat(), self.l.shortbiasrank[0], self.l.macdsignal[0], self.lowestHist[0],
+                  self.lowestDiff[0],  self.l.natr[0], self.l.natrRank[0]))
 
         if self.data.datetime.date(0).isoformat() < '2015-04-17':
             return
+        if self.data.datetime.date(0).isoformat() == '2020-07-06':
+            print("1")
+        if self.data.datetime.date(0).isoformat() == '2018-02-02':
+            pass
 
-        if self.data.datetime.date(0).isoformat() == '2017-07-21':
-            print("123123")
-        if self.data.datetime.date(0).isoformat() == '2018-01-30':
-            print("123123")
-        if self.strat.position.size > 0 :
-            if self.l.macdsignal[0] < 0:
-                # todo 这个位置还需要继续衡量
-                if self.l.macdhist[0] < self.l.macdhist[-1] - 0.025:
-                    self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
-                    self.l.PositionPercent[0] = 0
-            elif self.l.macdsignal[0] > 0 and self.pctRank[0] < 0.99:
+        # 风险分级
+        if self.riskLevel == 0:
+            if self.l.shortbiasrank[0] > self.p.msrThresholdValue or self.l.longbiasrank[0] > self.p.msrThresholdValue:
+                self.riskLevel = 1
+        elif self.riskLevel == 1:
+            if self.l.shortbiasrank[0] > 0.9 or self.l.longbiasrank[0] > 0.9:
                 pass
-            elif self.pctRank[0] > 0.99:
+            elif self.l.natrRank[0] < 0.6:
+                self.riskLevel = 0
+
+
+
+
+
+
+        # self.l.pctAtrPrice[0] = self.pctATR[0] / self.ema20[0] * 100
+
+        # if len(self.l.holdState) > 1:
+        #     self.l.holdState[0] = self.l.holdState[-1]
+        # else:
+        #     self.l.holdState[0] = 0
+        #
+        # if self.l.PositionPercent[-1] == 0.99 and self.data.high[0] >  self.l.OrderPrice[-1]:
+        #     self.l.holdState[0] = 5
+        #
+        # if self.l.PositionPercent[-1] == 0 and self.data.low[0] < self.l.OrderPrice[-1]:
+        #     self.l.holdState[0] = 0
+
+
+        '''
+        2020-11-01 卖出条件
+        1.大幅乖离之后且atr未恢复到正常水平之前
+        2.60日sma拐头向下或20日sma与60日sma空头排列
+        3.跌破60日ema均綫
+            前提是20日sma与60日sma乖离率不是很小的时候。
+            如果20日和60日sma的乖离率小于3%，等待不卖
+        4.1、2的充分条件是破线 20日ema或sma
+        5.均线密集不卖
+        '''
+        # todo 均线密集的问题没解决  包括进场和出场
+        if self.strat.position.size > 0:
+            # 判断均线密集
+            if abs(self.sma20[0] / self.sma60[0] - 1) < 0.05 and abs(self.sma60[0] / self.sma120[0] - 1) < 0.05:
+                return
+
+            if self.riskLevel == 1:
                 self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
                 self.l.PositionPercent[0] = 0
+            else:
+                # crossPrice = self.solveShortMidCrossPrice(self.sma20[0], self.data[-19], 20, self.sma60[0], self.data[-59], 60)
+                if abs(self.sma20[0] / self.sma60[0] - 1) < 0.02:
+                    return
+                elif self.sma60[0] < self.sma60[-1] or self.sma60[0] > self.sma20[0]:
+                    self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
+                    self.l.PositionPercent[0] = 0
+                else:
+                    self.l.OrderPrice[0] = max(self.ema60[0], self.data[-59])
+                    self.l.PositionPercent[0] = 0
 
-        # elif self.l.macdhist[0] > self.l.macdhist[-1] > self.lowestHist / 4 and self.l.macdsignal > self.lowestDiff / 4:
-        #         # 20日的ema和sma全部拐头向上
-        #         self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
-        #         self.l.PositionPercent[0] = 0.99
-        elif self.l.macdhist[0] > self.l.macdhist[-1] > self.lowestHist / 4 and self.l.macdsignal > self.lowestDiff / 4:
-                # 20日的ema和sma全部拐头向上
-                self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
-                self.l.PositionPercent[0] = 0.99
-        elif self.l.macdhist[0] < self.l.macdhist[-1] > self.lowestHist / 4 and self.l.macdsignal > self.lowestDiff / 4:
-                # 20日的ema和sma全部拐头向上
-                needDiff = self.solveDiff(self.l.macdsignal[0] - self.l.macdhist[0], self.l.macdhist[0] + 0.025, 9)
-
-                self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
-                self.l.PositionPercent[0] = 0.99
         else:
-            self.l.PositionPercent[0] = -1
+            '''
+            2020-11-1买入逻辑修改：
+            增加：
+            1.大幅乖离（短中、中长）之后，且ATR、乖离率未恢复到正常水平之前：
+                不进场
+                ----如果均线全部多头排列，且斜率全部向上，则进场
+            2.60日sma斜率大于0，且短、中、长期均线多头排列，则进场
+            3.1、2的充分条件破线20日sma和ema
+            4.均线密集不买
+            '''
 
 
-        '''
-        卖出：20日EMA拐头向下
-        买入：20日EMA拐头向上
-        '''
-        # if self.strat.position.size > 0:
-        #     # 20日的ema和sma有一个拐头向下
-        #     self.l.OrderPrice[0] = self.ema20[0]
-        #     self.l.PositionPercent[0] = 0
+            if self.riskLevel == 1:
+                pass
+                # if self.sma60[0] > self.sma60[-1] and self.sma20[0] > self.sma20[-1] and self.sma20[0] > self.sma60[0] \
+                #         and self.ema60[0] > self.ema60[-1] and self.ema20[0] > self.ema20[-1] and self.ema20[0] > self.ema60[0]:
+                #     self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
+                #     self.l.PositionPercent[0] = 0.99
+            else:
+                if abs(self.sma20[0] / self.sma60[0] - 1) < 0.05 and abs(self.sma60[0] / self.sma120[0] - 1) < 0.05:
+                    return
+                elif self.sma60[0] > self.sma60[-1] and self.sma20[0] > self.sma60[0] and self.sma20[0] > self.sma20[-1] and self.ema20[0] > self.ema20[-1] \
+                        and self.sma60[0] > self.sma120[0]:
+                    self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
+                    self.l.PositionPercent[0] = 0.99
+
+            '''
+            2020-11-8 买入逻辑
+            1.大幅乖离（短中、中长）之后，且ATR、乖离率未恢复到正常水平之前：
+                不进场
+                ----如果均线全部多头排列，且斜率全部向上，则进场
+            2.60日sma斜率大于0，且短、中、长期均线多头排列，则进场
+            3.1、2的充分条件破线20日sma和ema
+            4.均线密集(多头排列)
+                突破boll上轨买入
+            '''
+
+
+###############################################2020-10-31########################################################
+        # '''
+        # 2020-10-27 卖出条件
+        # 1.多头排列时，大幅乖离之后卖出
+        # 2.空头排列时，乖离没有减少的趋势不卖
+        #     柱线图小于0时，可卖
+        #     柱线图大于0时，有明显下降趋势可卖
+        #
+        # '''
+        # if self.l.holdState[0] == 5:
+        # # if self.strat.position.size > 0:
+        #     self.l.stop_long[0] = max(self.s_l[0], self.l.stop_long[-1])
+        #     if self.l.macdsignal[0] < 0:
+        #         # todo 这个位置还需要继续衡量
+        #         if self.l.macdhist[0] < self.l.macdhist[-1] < 0 \
+        #             or (self.l.macdhist[0] < self.l.macdhist[-1] and self.l.macdHistMoveRank[0] > 0.8) :
+        #             self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
+        #             self.l.PositionPercent[0] = 0
+        #     elif self.l.macdsignal[0] > 0 and self.macdsignalRank[0] < self.p.msrThresholdValue:
+        #         if self.riskLevel == 1:
+        #             self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
+        #             self.l.PositionPercent[0] = 0
+        #         elif self.riskLevel == 0:
+        #             # pass
+        #             self.l.OrderPrice[0] = self.l.stop_long[0]
+        #             self.l.PositionPercent[0] = 0
+        #
+        #     elif self.macdsignalRank[0] > self.p.msrThresholdValue:
+        #         self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
+        #         self.l.PositionPercent[0] = 0
         # else:
-        #     # 20日的ema和sma有一个拐头向上
-        #     self.l.OrderPrice[0] = self.ema20[0]
-        #     self.l.PositionPercent[0] = 0.99
+        #     '''
+        #     2020-10-27之前的买入逻辑
+        #     1.大幅乖离之后不进场
+        #     2.短、中、长期均线明显空头排列不进场
+        #     3.当短、中、长期均线多头排列时，乖离率有增大的趋势
+        #         macd柱状图的cur_value > pre_value
+        #     4.当短、中、长期均线空头排列时，乖离率有增大的趋势且正在增大
+        #         macd柱状图的cur_value > pre_value 且 cur_value > 0
+        #     5.破线。同时突破短期ema和sma均线
+        #     '''
+        #     if self.riskLevel == 1:
+        #         return
+        #     if self.l.macdsignal[0] > 0:
+        #         # todo  self.lowestHist[0] / 4 不合理
+        #         if self.l.macdhist[0] > self.l.macdhist[-1] > self.lowestHist[0] / 4:
+        #             self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
+        #             self.l.PositionPercent[0] = 0.99
+        #     elif self.lowestDiff[0] / 4 < self.l.macdsignal < 0:
+        #         # pass
+        #         if self.l.macdhist[0] > self.l.macdhist[-1] > 0:
+        #             self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
+        #             self.l.PositionPercent[0] = 0.99
+
+###############################################2020-10-31########################################################
+
+        # if self.strat.position.size > 0 :
+        #     if self.l.macdsignal[0] < 0:
+        #         # todo 这个位置还需要继续衡量
+        #         if self.l.macdhist[0] < self.l.macdhist[-1] - 0.01:
+        #             self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
+        #             self.l.PositionPercent[0] = 0
+        #     elif self.l.macdsignal[0] > 0 and self.macdsignalRank[0] < 0.99:
+        #         pass
+        #     elif self.macdsignalRank[0] > 0.99:
+        #         self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
+        #         self.l.PositionPercent[0] = 0
+        # else:
+        #     if self.l.macdsignal[0] > 0:
+        #         if self.l.macdhist[0] > self.l.macdhist[-1] > self.lowestHist[0] / 4:
+        #             self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
+        #             self.l.PositionPercent[0] = 0.99
+        #     elif self.lowestDiff[0] / 4 < self.l.macdsignal < 0:
+        #         if self.l.macdhist[0] > self.l.macdhist[-1] > 0:
+        #             self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
+        #             self.l.PositionPercent[0] = 0.99
 
 
+'''
+乖离率判断指标
+'''
+class DeviateIndicator(bt.Indicator):
+    lines = ('deviateRank',)
+    plotinfo = dict(subplot=True, plotlinelabels=True)
 
+    plotlines = dict(
+        # macdhist=dict( _method='bar',),
+        # pctAtrPrice=dict(_plotskip='True', ),
+        deviateRank=dict(_plotskip='True', ),
+    )
+
+    params = dict(
+        period_me1=20,
+        period_me2=60,
+        name='',
+        msrThresholdValue=0.99, # macdsignalRank的阈值
+    )
+
+    def __init__(self):
+        self.macd = bt.ind.MACDHisto(self.data, period_me1=self.p.period_me1, period_me2=self.p.period_me2, period_signal=9)
+        self.l.deviateRank = bt.ind.PercentRank(self.macd.signal, period=200)
+
+
+'''
+均线密集判断
+大幅乖离判断
+统计在过去周期内，有多少天是均线密集
+
+2020-11-08 
+均线密集条件
+1.60日sma与120sma多头排列
+2.当前日期cs，sm，ml，偏离率都小于5%
+3.近期20或以上bar，均线密集时期（cs，sm，ml，偏离率都小于5%）大于90%
+
+大幅乖离条件
+1.60日ema与120日ema之间的差值在过去某个周期内超过99%的bar
+'''
+class JXMJIndicator(bt.Indicator):
+    lines = ('JXMJ','DFGL')
+    plotinfo = dict(subplot=True, plotlinelabels=True)
+
+    params = dict(
+        period_short=20,
+        period_middle=60,
+        period_long=120,
+        name='',
+        period_jxmj=21,  # 均线密集判断周期
+        jxmj_ThresholdValue=19, # 周期内均线密集最小时间
+        period_dfgl=144,  # 大幅乖离判断周期
+        dfgl_ThresholdValue=0.99,  # 大幅乖离的判断rank的阈值
+    )
+
+    def __init__(self):
+        self.smashort = bt.ind.SMA(self.data, period=self.p.period_short)
+        self.smamid = bt.ind.SMA(self.data, period=self.p.period_middle)
+        self.smalong = bt.ind.SMA(self.data, period=self.p.period_long)
+        self.emashort = bt.ind.EMA(self.data, period=self.p.period_short)
+        self.emamid = bt.ind.EMA(self.data, period=self.p.period_middle)
+        self.emalong = bt.ind.EMA(self.data, period=self.p.period_long)
+
+        jxmj_cs = abs(self.data / self.smashort - 1)*100
+        jxmj_sm = abs(self.smashort / self.smamid - 1) * 100
+        jxmj_ml = abs(self.smamid / self.smalong - 1) * 100
+        self.JXMJ = JXMJDayFsumIndicator(bt.Max(jxmj_cs,jxmj_sm,jxmj_ml), period=self.p.period_jxmj).l.JXMJFsum
+        self.l.JXMJ = bt.If( bt.And(self.JXMJ > self.p.jxmj_ThresholdValue, self.smamid > self.smalong), 1, 0)
+
+        dfgl_cs = self.data - self.emashort
+        dfgl_sm = self.emashort - self.emamid
+        dfgl_ml = self.emamid - self.emalong
+
+        self.dfgl = bt.ind.PercentRank(abs(dfgl_sm), period=self.p.period_dfgl)
+        self.l.DFGL = bt.If( self.dfgl > self.p.dfgl_ThresholdValue, 1, 0)
+
+'''
+计算均线密集
+在最近period个周期内，有多少个bar符合均线密集条件
+'''
+class JXMJDayFsumIndicator(BaseApplyN):
+    # alias = ('PctRankAbs',)
+    lines = ('JXMJFsum',)
+    params = (
+        ('period', 21),
+        ('func', lambda d: fsum((x < 5) for x in d)),
+    )
 

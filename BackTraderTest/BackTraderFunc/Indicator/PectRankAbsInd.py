@@ -1,5 +1,5 @@
 from backtrader.indicators import BaseApplyN
-from mpmath import fsum
+from math import fsum
 
 
 class PercentRankAbs(BaseApplyN):

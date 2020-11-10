@@ -39,7 +39,7 @@ from BackTraderTest.BackTraderFunc.DataReadFromCsv import read_dataframe
 from BackTraderTest.BackTraderFunc.DataResample import data_min_resample
 from BackTraderTest.BackTraderFunc.Indicator.EntryMacdDivergence import MACDEMAEntryPoint
 from BackTraderTest.BackTraderFunc.Indicator.PositionManger import BollPositionManager, SMAPositionManager, \
-    MACDSMAPositionManager, MACDBiasPositionManager
+    MACDSMAPositionManager, MACDBiasPositionManager, DeviateIndicator, JXMJIndicator, JXMJDayFsumIndicator
 from BackTraderTest.BackTraderFunc.Indicator.StopTrailer import StopTrailer
 from BackTraderTest.BackTraderFunc.MacdDivergence import macd_extend_data
 from BackTraderTest.BackTraderFunc.St_TripleScreen import TripleScreen_extend_data
@@ -281,17 +281,54 @@ class St(bt.Strategy):
         # self.bollPosition = SMAPositionManager(self.data2)
         # self.bollPosition = SMAPositionManager(self.data)
         # self.bollPosition = MACDSMAPositionManager(self.data)
-        self.bollPosition = MACDBiasPositionManager(self.data)
-        self.ema20 = bt.talib.EMA(self.data, timeperiod=20)
-        self.sma20 = bt.talib.SMA(self.data, timeperiod=20)
+        # self.macdBiasPosition60min = MACDBiasPositionManager(self.data)
+        # self.macdBiasPosition60min = MACDBiasPositionManager(self.data, name='15min')
+        self.macdBiasPositionDay = MACDBiasPositionManager(self.data,  name='day')
+        # self.ema20min15 = bt.talib.EMA(self.data, timeperiod=20)
+        # self.sma20min15 = bt.talib.SMA(self.data, timeperiod=20)
+        # self.ema60min15 = bt.talib.EMA(self.data, timeperiod=60)
+        # self.sma60min15 = bt.talib.SMA(self.data, timeperiod=60)
+        # self.ema120min15 = bt.talib.EMA(self.data, timeperiod=120)
+        # self.sma120min15 = bt.talib.SMA(self.data, timeperiod=120)
+        #
+        # self.ema20min60 = bt.talib.EMA(self.data1, timeperiod=20)
+        # self.sma20min60 = bt.talib.SMA(self.data1, timeperiod=20)
+        # self.ema60min60 = bt.talib.EMA(self.data1, timeperiod=60)
+        # self.sma60min60 = bt.talib.SMA(self.data1, timeperiod=60)
+        # self.ema120min60 = bt.talib.EMA(self.data1, timeperiod=120)
+        # self.sma120min60 = bt.talib.SMA(self.data1, timeperiod=120)
 
-        self.sma60 = bt.talib.SMA(self.data, timeperiod=60)
+        self.ema20day = bt.talib.EMA(self.data, timeperiod=20)
+        self.sma20day = bt.talib.SMA(self.data, timeperiod=20)
+        self.ema60day = bt.talib.EMA(self.data, timeperiod=60)
+        self.sma60day = bt.talib.SMA(self.data, timeperiod=60)
+        self.ema120day = bt.talib.EMA(self.data, timeperiod=120)
+        self.sma120day = bt.talib.SMA(self.data, timeperiod=120)
 
-        self.macd = bt.ind.MACD(self.data, period_me1=20,period_me2=60,period_signal=9)
+        self.a = JXMJIndicator(self.data)
+
+
+
+        # self.deviate60min = DeviateIndicator(self.data)
+        # self.deviateDay = DeviateIndicator(self.data1)
+        # self.macd60min = bt.ind.MACDHisto(self.data, period_me1=20, period_me2=60, period_signal=9)
+
+        # self.macd = bt.ind.MACD(self.data, period_me1=20,period_me2=60,period_signal=9)
+        # self.shortmacdhist = bt.ind.MACDHistogram(self.data, period_me1=20, period_me2=60, period_signal=9)
+        # self.longmacdhist = bt.ind.MACDHistogram(self.data, period_me1=60, period_me2=120, period_signal=9)
+        # self.histo = bt.ind.CrossOver(self.longmacdhist.histo, 0)
+        # self.longhistoUpday = bt.ind.UpDayBool(self.longmacdhist.histo)
 
         self.order = None
         self.entering = None
         self.stop_large = True
+
+        self.stoptrailer = st = StopTrailer(atrperiod=14,
+                                            emaperiod=10,
+                                            stopfactor=100)
+
+        self.exit_long = bt.ind.CrossDown(self.data,
+                                          self.stoptrailer.stop_long, plotname='Exit Long')
 
     def start(self):
         self.entering = 0
@@ -324,28 +361,67 @@ class St(bt.Strategy):
     def next_open(self):
         if self.data.datetime.date(0).isoformat() == '2016-11-18':
             print("123123")
-        # only come in cheat on open is true
-        if self.bollPosition.PositionPercent[0] == 0.99:
-            # self.order = self.buy(self.data, size=100, price=self.bollPosition.OrderPrice[0], exectype=bt.Order.Stop)
-            # self.order = self.order_target_percent(target=self.bollPosition.PositionPercent[0],
-            #                                        price=self.bollPosition.OrderPrice[0], exectype=bt.Order.Stop)
-            if self.data.open[0] > self.bollPosition.OrderPrice[0]:
-                self.order = self.order_target_percent(target=self.bollPosition.PositionPercent[0],
-                                                       price=self.data.open[0],
-                                                       exectype=bt.Order.Stop)
-            elif self.data.high[0] > self.bollPosition.OrderPrice[0]:
-                self.order = self.order_target_percent(target=self.bollPosition.PositionPercent[0],
-                                                       price=self.bollPosition.OrderPrice[0],
-                                                       # price=self.data.high[0],
-                                                       exectype=bt.Order.Stop)
 
-        elif self.bollPosition.PositionPercent[0] == 0:
-            # self.order = self.order_target_percent(target=self.bollPosition.PositionPercent[0], price=self.bollPosition.OrderPrice[0], exectype=bt.Order.Stop)
-            if self.data.low[0] < self.bollPosition.OrderPrice[0]:
-                self.order = self.order_target_percent(target=self.bollPosition.PositionPercent[0],
-                                                       price=self.bollPosition.OrderPrice[0],
-                                                       # price=self.data.low[0],
-                                                       exectype=bt.Order.Stop)
+
+
+        if self.position.size > 0:
+            # if self.position.size > 0:
+            #     if self.deviate60min[0] > 0.99 or self.deviateDay[0] > 0.99:
+            #         if self.data.low[0] < max(self.ema20min[0], self.data[-19]):
+            #             self.order = self.order_target_percent(target=0,
+            #                                                    price=max(self.ema20min[0], self.data[-19]),
+            #                                                    exectype=bt.Order.Stop)
+            #     elif self.macdBiasPositionDay.PositionPercent[0] == 0:
+            #         if self.data.low[0] < self.macdBiasPositionDay.OrderPrice[0]:
+            #             self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
+            #                                                    price=self.macdBiasPositionDay.OrderPrice[0],
+            #                                                    exectype=bt.Order.Stop)
+            # else:
+            #     if self.macd60min.histo[0] > 0:
+            #         self.order = self.order_target_percent(target=0.99)
+            #     elif self.data.high[0] > max(self.ema20min[0], self.data[-19]):
+            #         self.order = self.order_target_percent(target=0.99,
+            #                                                price=max(self.ema20min[0], self.data[-19]),
+            #                                                exectype=bt.Order.Stop)
+
+
+            if self.macdBiasPositionDay.PositionPercent[0] == 0:
+                if self.data.low[0] < self.macdBiasPositionDay.OrderPrice[0]:
+                    self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
+                                                           price=self.macdBiasPositionDay.OrderPrice[0],
+                                                           exectype=bt.Order.Stop)
+
+        else:
+            if self.macdBiasPositionDay.PositionPercent[0] == 0.99:
+                if self.data.open[0] > self.macdBiasPositionDay.OrderPrice[0]:
+                    self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
+                                                           price=self.data.open[0],
+                                                           exectype=bt.Order.Stop)
+                elif self.data.high[0] > self.macdBiasPositionDay.OrderPrice[0]:
+                    self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
+                                                           price=self.macdBiasPositionDay.OrderPrice[0],
+                                                           # price=self.data.high[0],
+                                                           exectype=bt.Order.Stop)
+
+
+        # if self.macdBiasPositionDay.PositionPercent[0] == 0.99:
+        #     if self.data.open[0] > self.macdBiasPositionDay.OrderPrice[0]:
+        #         self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
+        #                                                price=self.data.open[0],
+        #                                                exectype=bt.Order.Stop)
+        #     elif self.data.high[0] > self.macdBiasPositionDay.OrderPrice[0]:
+        #         self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
+        #                                                price=self.macdBiasPositionDay.OrderPrice[0],
+        #                                                # price=self.data.high[0],
+        #                                                exectype=bt.Order.Stop)
+        #
+        # elif self.macdBiasPositionDay.PositionPercent[0] == 0:
+        #     if self.data.low[0] < self.macdBiasPositionDay.OrderPrice[0]:
+        #         self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
+        #                                                price=self.macdBiasPositionDay.OrderPrice[0],
+        #                                                # price=self.data.low[0],
+        #                                                exectype=bt.Order.Stop)
+
 
 
 
@@ -409,7 +485,10 @@ def runstrat():
     # Data feed kwargs
     # '15min', '30min', '60min',
     # dataframe = read_dataframe(args.data, args.years, ['15min', '60min', 'd'])
-    # dataframe = read_dataframe(args.data, args.years, ['d'])
+    # dataframe = read_dataframe(args.data, args.years, ['15min', '60min', 'd'])
+    # for i in range(len(dataframe)):
+    #     cerebro.adddata(bt.feeds.PandasData(dataname=dataframe[i]))
+
 
     # for i in range(len(dataframe)):
     #     temp_df = macd_extend_data(dataframe[i])
@@ -417,9 +496,9 @@ def runstrat():
     #                                       divergence_top=temp_df.columns.to_list().index('divergence_top'),
     #                                       divergence_bottom=temp_df.columns.to_list().index('divergence_bottom')))
 
-    # dataframe = QAIndex2btData("512000", '2017-01-01', '2020-10-13')
-    # dataframe = QAStock2btData("000651", '2014-01-01', '2020-10-13')
-    dataframe = read_dataframe('000651.csv', '2014-2020', ['d'])[0]
+    # dataframe = QAIndex2btData("159934", '2014-01-01', '2020-10-13')
+    dataframe = QAStock2btData("600600", '2014-01-01', '2020-10-13')
+    # dataframe = read_dataframe('000651.csv', '2014-2020', ['d'])[0]
     cerebro.adddata(bt.feeds.PandasData(dataname=dataframe))
 
     cerebro.addstrategy(St)
@@ -451,17 +530,17 @@ def parse_args():
         description='Sample for pivot point and cross plotting')
 
     parser.add_argument('--data', required=False,
-                        default='000002.csv',
+                        default='000651.csv',
                         help='Data to be read in')
 
-    parser.add_argument('--years', default='2015-2020',
+    parser.add_argument('--years', default='2014-2020',
                         help='Formats: YYYY-ZZZZ / YYYY / YYYY- / -ZZZZ')
 
     parser.add_argument('--multi', required=False, action='store_true',
                         help='Couple all lines of the indicator')
 
     parser.add_argument('--plot', required=False, action='store_true',
-                        default=False,
+                        default=True,
                         help=('Plot the result'))
 
     return parser.parse_args()

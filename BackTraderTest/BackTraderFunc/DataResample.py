@@ -54,8 +54,11 @@ def data_min_resample(min_data, type_='5min'):
              part_2_res]
         ).dropna().sort_index()
     else:
-        return min_data.resample(
+         df = min_data.resample(
             type_,
             base=0,
             closed='right'
         ).agg(CONVERSION).dropna()
+
+         df.index = df.index.map(lambda t: t.replace(hour=15))
+         return df
