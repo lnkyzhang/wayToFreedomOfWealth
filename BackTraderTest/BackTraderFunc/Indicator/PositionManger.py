@@ -253,7 +253,7 @@ class MACDBiasPositionManager(bt.Indicator):
         self.l.natrRank = bt.ind.PercentRank(self.l.natr, period=144)
 
         # 均线密集计算
-        self.l.jxmj = JXMJIndicator(self.data)
+        # self.l.jxmj = JXMJIndicator(self.data)
 
         # 止损
         atr = bt.ind.ATR(self.data, period=14)
@@ -312,7 +312,7 @@ class MACDBiasPositionManager(bt.Indicator):
 
         if self.data.datetime.date(0).isoformat() < '2015-04-17':
             return
-        if self.data.datetime.date(0).isoformat() == '2020-07-06':
+        if self.data.datetime.date(0).isoformat() == '2019-07-12':
             print("1")
         if self.data.datetime.date(0).isoformat() == '2018-02-02':
             pass
@@ -359,8 +359,8 @@ class MACDBiasPositionManager(bt.Indicator):
         # todo 均线密集的问题没解决  包括进场和出场
         if self.strat.position.size > 0:
             # 判断均线密集
-            if abs(self.sma20[0] / self.sma60[0] - 1) < 0.05 and abs(self.sma60[0] / self.sma120[0] - 1) < 0.05:
-                return
+            # if abs(self.sma20[0] / self.sma60[0] - 1) < 0.05 and abs(self.sma60[0] / self.sma120[0] - 1) < 0.05:
+            #     return
 
             if self.riskLevel == 1:
                 self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
@@ -396,9 +396,9 @@ class MACDBiasPositionManager(bt.Indicator):
                 #     self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
                 #     self.l.PositionPercent[0] = 0.99
             else:
-                if abs(self.sma20[0] / self.sma60[0] - 1) < 0.05 and abs(self.sma60[0] / self.sma120[0] - 1) < 0.05:
+                if abs(self.sma20[0] / self.sma60[0] - 1) < 0.05 and abs(self.sma60[0] / self.sma120[0] - 1) < 0.05 and abs(self.data[0] / self.sma20[0] -1) < 0.05:
                     return
-                elif self.sma60[0] > self.sma60[-1] and self.sma20[0] > self.sma60[0] and self.sma20[0] > self.sma20[-1] and self.ema20[0] > self.ema20[-1] \
+                if self.sma60[0] > self.sma60[-1] and self.sma20[0] > self.sma60[0] and self.sma20[0] > self.sma20[-1] and self.ema20[0] > self.ema20[-1] \
                         and self.sma60[0] > self.sma120[0]:
                     self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
                     self.l.PositionPercent[0] = 0.99
@@ -518,65 +518,15 @@ class DeviateIndicator(bt.Indicator):
         self.l.deviateRank = bt.ind.PercentRank(self.macd.signal, period=200)
 
 
-'''
-均线密集判断
-大幅乖离判断
-统计在过去周期内，有多少天是均线密集
 
-2020-11-08 
-均线密集条件
-1.60日sma与120sma多头排列
-2.当前日期cs，sm，ml，偏离率都小于5%
-3.近期20或以上bar，均线密集时期（cs，sm，ml，偏离率都小于5%）大于90%
 
-大幅乖离条件
-1.60日ema与120日ema之间的差值在过去某个周期内超过99%的bar
-'''
-class JXMJIndicator(bt.Indicator):
-    lines = ('JXMJ','DFGL')
-    plotinfo = dict(subplot=True, plotlinelabels=True)
 
-    params = dict(
-        period_short=20,
-        period_middle=60,
-        period_long=120,
-        name='',
-        period_jxmj=21,  # 均线密集判断周期
-        jxmj_ThresholdValue=19, # 周期内均线密集最小时间
-        period_dfgl=144,  # 大幅乖离判断周期
-        dfgl_ThresholdValue=0.99,  # 大幅乖离的判断rank的阈值
-    )
 
-    def __init__(self):
-        self.smashort = bt.ind.SMA(self.data, period=self.p.period_short)
-        self.smamid = bt.ind.SMA(self.data, period=self.p.period_middle)
-        self.smalong = bt.ind.SMA(self.data, period=self.p.period_long)
-        self.emashort = bt.ind.EMA(self.data, period=self.p.period_short)
-        self.emamid = bt.ind.EMA(self.data, period=self.p.period_middle)
-        self.emalong = bt.ind.EMA(self.data, period=self.p.period_long)
+# bias: AwesomeOscillator\PercentagePriceOscillator\PercentagePriceOscillatorShort\PriceOscillator
 
-        jxmj_cs = abs(self.data / self.smashort - 1)*100
-        jxmj_sm = abs(self.smashort / self.smamid - 1) * 100
-        jxmj_ml = abs(self.smamid / self.smalong - 1) * 100
-        self.JXMJ = JXMJDayFsumIndicator(bt.Max(jxmj_cs,jxmj_sm,jxmj_ml), period=self.p.period_jxmj).l.JXMJFsum
-        self.l.JXMJ = bt.If( bt.And(self.JXMJ > self.p.jxmj_ThresholdValue, self.smamid > self.smalong), 1, 0)
+# suppor and resistant: DemarkPivotPoint\FibonacciPivotPoint\MovingAverageSimpleEnvelope\PivotPoint
 
-        dfgl_cs = self.data - self.emashort
-        dfgl_sm = self.emashort - self.emamid
-        dfgl_ml = self.emamid - self.emalong
+# PrettyGoodOscillator:bias & sr
 
-        self.dfgl = bt.ind.PercentRank(abs(dfgl_sm), period=self.p.period_dfgl)
-        self.l.DFGL = bt.If( self.dfgl > self.p.dfgl_ThresholdValue, 1, 0)
-
-'''
-计算均线密集
-在最近period个周期内，有多少个bar符合均线密集条件
-'''
-class JXMJDayFsumIndicator(BaseApplyN):
-    # alias = ('PctRankAbs',)
-    lines = ('JXMJFsum',)
-    params = (
-        ('period', 21),
-        ('func', lambda d: fsum((x < 5) for x in d)),
-    )
-
+# jxmj use sma
+# dfgl use ema

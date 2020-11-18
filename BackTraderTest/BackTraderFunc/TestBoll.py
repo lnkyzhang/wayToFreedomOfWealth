@@ -38,8 +38,9 @@ from backtrader.analyzers import TimeReturn, Transactions
 from BackTraderTest.BackTraderFunc.DataReadFromCsv import read_dataframe
 from BackTraderTest.BackTraderFunc.DataResample import data_min_resample
 from BackTraderTest.BackTraderFunc.Indicator.EntryMacdDivergence import MACDEMAEntryPoint
+from BackTraderTest.BackTraderFunc.Indicator.JXMJInd import JXMJIndicator
 from BackTraderTest.BackTraderFunc.Indicator.PositionManger import BollPositionManager, SMAPositionManager, \
-    MACDSMAPositionManager, MACDBiasPositionManager, DeviateIndicator, JXMJIndicator, JXMJDayFsumIndicator
+    MACDSMAPositionManager, MACDBiasPositionManager, DeviateIndicator
 from BackTraderTest.BackTraderFunc.Indicator.StopTrailer import StopTrailer
 from BackTraderTest.BackTraderFunc.MacdDivergence import macd_extend_data
 from BackTraderTest.BackTraderFunc.St_TripleScreen import TripleScreen_extend_data
@@ -305,7 +306,8 @@ class St(bt.Strategy):
         self.ema120day = bt.talib.EMA(self.data, timeperiod=120)
         self.sma120day = bt.talib.SMA(self.data, timeperiod=120)
 
-        self.a = JXMJIndicator(self.data)
+
+        self.JXMJIndicator = JXMJIndicator(self.data)
 
 
 
@@ -359,40 +361,44 @@ class St(bt.Strategy):
 
 
     def next_open(self):
-        if self.data.datetime.date(0).isoformat() == '2016-11-18':
+        if self.data.datetime.date(0).isoformat() == '2020-01-06':
             print("123123")
 
 
 
         if self.position.size > 0:
-            # if self.position.size > 0:
-            #     if self.deviate60min[0] > 0.99 or self.deviateDay[0] > 0.99:
-            #         if self.data.low[0] < max(self.ema20min[0], self.data[-19]):
-            #             self.order = self.order_target_percent(target=0,
-            #                                                    price=max(self.ema20min[0], self.data[-19]),
-            #                                                    exectype=bt.Order.Stop)
-            #     elif self.macdBiasPositionDay.PositionPercent[0] == 0:
-            #         if self.data.low[0] < self.macdBiasPositionDay.OrderPrice[0]:
-            #             self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
-            #                                                    price=self.macdBiasPositionDay.OrderPrice[0],
-            #                                                    exectype=bt.Order.Stop)
-            # else:
-            #     if self.macd60min.histo[0] > 0:
-            #         self.order = self.order_target_percent(target=0.99)
-            #     elif self.data.high[0] > max(self.ema20min[0], self.data[-19]):
-            #         self.order = self.order_target_percent(target=0.99,
-            #                                                price=max(self.ema20min[0], self.data[-19]),
-            #                                                exectype=bt.Order.Stop)
+            if self.JXMJIndicator.JXMJHoldState[0] == 1:
+                return
 
+            if self.JXMJIndicator.PositionPercent[0] == 0:
+                if self.data.low[0] < self.JXMJIndicator.OrderPrice[0]:
+                    self.order = self.order_target_percent(target=self.JXMJIndicator.PositionPercent[0],
+                                                           price=self.JXMJIndicator.OrderPrice[0],
+                                                           exectype=bt.Order.Stop)
 
-            if self.macdBiasPositionDay.PositionPercent[0] == 0:
+            elif self.macdBiasPositionDay.PositionPercent[0] == 0:
                 if self.data.low[0] < self.macdBiasPositionDay.OrderPrice[0]:
                     self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
                                                            price=self.macdBiasPositionDay.OrderPrice[0],
                                                            exectype=bt.Order.Stop)
 
         else:
-            if self.macdBiasPositionDay.PositionPercent[0] == 0.99:
+            if self.JXMJIndicator.PositionPercent[0] == 0.99:
+                self.order = self.order_target_percent(target=self.JXMJIndicator.PositionPercent[0],
+                                                       # price=self.JXMJIndicator.OrderPrice[0],
+                                                       exectype=bt.Order.Market)
+                # if self.data.open[0] > self.JXMJIndicator.OrderPrice[0]:
+                #     self.order = self.order_target_percent(target=self.JXMJIndicator.PositionPercent[0],
+                #                                            price=self.data.open[0],
+                #                                            exectype=bt.Order.Stop)
+                # elif self.data.high[0] > self.JXMJIndicator.OrderPrice[0]:
+                #     self.order = self.order_target_percent(target=self.JXMJIndicator.PositionPercent[0],
+                #                                            price=self.JXMJIndicator.OrderPrice[0],
+                #                                            exectype=bt.Order.Stop)
+
+            elif self.macdBiasPositionDay.PositionPercent[0] == 0.99:
+                if self.JXMJIndicator.l.JXMJ[0] == 1:
+                    return
                 if self.data.open[0] > self.macdBiasPositionDay.OrderPrice[0]:
                     self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
                                                            price=self.data.open[0],
@@ -400,27 +406,8 @@ class St(bt.Strategy):
                 elif self.data.high[0] > self.macdBiasPositionDay.OrderPrice[0]:
                     self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
                                                            price=self.macdBiasPositionDay.OrderPrice[0],
-                                                           # price=self.data.high[0],
                                                            exectype=bt.Order.Stop)
 
-
-        # if self.macdBiasPositionDay.PositionPercent[0] == 0.99:
-        #     if self.data.open[0] > self.macdBiasPositionDay.OrderPrice[0]:
-        #         self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
-        #                                                price=self.data.open[0],
-        #                                                exectype=bt.Order.Stop)
-        #     elif self.data.high[0] > self.macdBiasPositionDay.OrderPrice[0]:
-        #         self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
-        #                                                price=self.macdBiasPositionDay.OrderPrice[0],
-        #                                                # price=self.data.high[0],
-        #                                                exectype=bt.Order.Stop)
-        #
-        # elif self.macdBiasPositionDay.PositionPercent[0] == 0:
-        #     if self.data.low[0] < self.macdBiasPositionDay.OrderPrice[0]:
-        #         self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
-        #                                                price=self.macdBiasPositionDay.OrderPrice[0],
-        #                                                # price=self.data.low[0],
-        #                                                exectype=bt.Order.Stop)
 
 
 
@@ -497,7 +484,7 @@ def runstrat():
     #                                       divergence_bottom=temp_df.columns.to_list().index('divergence_bottom')))
 
     # dataframe = QAIndex2btData("159934", '2014-01-01', '2020-10-13')
-    dataframe = QAStock2btData("600600", '2014-01-01', '2020-10-13')
+    dataframe = QAStock2btData("600036", '2014-01-01', '2020-10-13')
     # dataframe = read_dataframe('000651.csv', '2014-2020', ['d'])[0]
     cerebro.adddata(bt.feeds.PandasData(dataname=dataframe))
 
