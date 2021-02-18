@@ -19,7 +19,7 @@ from BackTraderTest.BackTraderFunc.makeData import QAStock2btData
 from matplotlib import pyplot as plt
 import sympy
 
-dataframe = QAStock2btData("600036", '2012-01-01', '2029-01-13')
+dataframe = QAStock2btData("000651", '2012-01-01', '2029-01-13')
 
 
 # 测试natr
@@ -28,7 +28,8 @@ dataframe = QAStock2btData("600036", '2012-01-01', '2029-01-13')
 #
 # a = a / ema20
 
-real = ta.PPO(dataframe.close,fastperiod=20, slowperiod=60)
+upperband, middleband, lowerband = ta.BBANDS(dataframe.close,timeperiod=20)
+real = (upperband - lowerband) / middleband
 
 
 fig, ax = plt.subplots(figsize=(10, 7))

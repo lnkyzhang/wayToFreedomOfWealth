@@ -14,6 +14,6 @@ pd.set_option('display.max_columns', 100)
 pd.set_option('display.width', 300)
 
 # 登录jqdata
-auth('15640316927', '316927')  # 账号是申请时所填写的手机号；密码为聚宽官网登录密码，新申请用户默认为手机号后6位
+auth('15840339627', '339627')  # 账号是申请时所填写的手机号；密码为聚宽官网登录密码，新申请用户默认为手机号后6位
 
 myClient = pymongo.MongoClient('mongodb://localhost:27017/')

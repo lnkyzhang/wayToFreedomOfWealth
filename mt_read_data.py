@@ -32,7 +32,7 @@ def mt_read_stockDay_from_TuShare(code, startDate, endDate, qfq=False):
     return df
 
 
-def mt_read_index_codes(index, date):
+def mt_read_index_codes(index, date = ""):
     '''
     从数据库中获取指数成分股
     :param index: 指数代码
@@ -42,12 +42,16 @@ def mt_read_index_codes(index, date):
     mydb = myClient['stockCommonDbTuShare']
     myCollection = mydb['stockIndexStocksJQData']
 
-    if date[5:7] >= "07":
-        date = date[0:5] + "07-01"
+    if date == "":
+        ref_ = myCollection.find({'index': index}).sort([('datetime',-1)]).limit(1)
     else:
-        date = date[0:5] + "01-01"
 
-    ref_ = myCollection.find({'index': index, 'datetime': {"$gt": date}}).limit(1)
+        if date[5:7] >= "07":
+            date = date[0:5] + "07-01"
+        else:
+            date = date[0:5] + "01-01"
+
+        ref_ = myCollection.find({'index': index, 'datetime': {"$gt": date}}).limit(1)
 
     for d in ref_:
         print(d['codes'])

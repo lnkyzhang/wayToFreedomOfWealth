@@ -1,5 +1,5 @@
 from dateutil.relativedelta import relativedelta
-from jqdatasdk import query, valuation, indicator, get_fundamentals, finance, get_bars
+from jqdatasdk import query, valuation, indicator, get_fundamentals, finance, get_bars, get_all_securities
 
 from mt_com_setting import *
 import QUANTAXIS as QA
@@ -9,6 +9,10 @@ def _save2mongodb(myCollection, data, isDf=True):
         myCollection.insert_many(QA.QA_util_to_json_from_pandas(data))
     else:
         myCollection.insert_many(data)
+
+def GetStockListToText():
+    df = get_all_securities("stock", "2021-1-8")
+    df.to_csv("./stockList.csv")
 
 def mt_save_financial_from_JQData(stk, start_date, end_date):
     '''
@@ -79,7 +83,8 @@ if __name__ == '__main__':
 
     # mt_save_financial_from_JQData('finance.STK_INCOME_STATEMENT',"2005-01-01", "2020-04-16")
 
-    TestGetMinDataFromJQdata()
+    # TestGetMinDataFromJQdata()
+    GetStockListToText()
 
 
 

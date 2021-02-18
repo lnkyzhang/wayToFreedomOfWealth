@@ -37,6 +37,7 @@ from backtrader.analyzers import TimeReturn, Transactions
 
 from BackTraderTest.BackTraderFunc.DataReadFromCsv import read_dataframe
 from BackTraderTest.BackTraderFunc.DataResample import data_min_resample
+from BackTraderTest.BackTraderFunc.Indicator.DFGLInd import DFGLInd
 from BackTraderTest.BackTraderFunc.Indicator.EntryMacdDivergence import MACDEMAEntryPoint
 from BackTraderTest.BackTraderFunc.Indicator.JXMJInd import JXMJIndicator
 from BackTraderTest.BackTraderFunc.Indicator.PositionManger import BollPositionManager, SMAPositionManager, \
@@ -484,7 +485,7 @@ def runstrat():
     #                                       divergence_bottom=temp_df.columns.to_list().index('divergence_bottom')))
 
     # dataframe = QAIndex2btData("159934", '2014-01-01', '2020-10-13')
-    dataframe = QAStock2btData("600036", '2014-01-01', '2020-10-13')
+    dataframe = QAStock2btData("000651", '2014-01-01', '2020-10-13')
     # dataframe = read_dataframe('000651.csv', '2014-2020', ['d'])[0]
     cerebro.adddata(bt.feeds.PandasData(dataname=dataframe))
 
@@ -508,7 +509,7 @@ def runstrat():
     transactions.to_csv("transtion.csv")
     if args.plot:
         # cerebro.plot(style='line')
-        cerebro.plot(style='candle')
+        cerebro.plot(style='candle',iplot=False)
 
 
 def parse_args():

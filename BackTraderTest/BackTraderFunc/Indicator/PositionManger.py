@@ -312,7 +312,7 @@ class MACDBiasPositionManager(bt.Indicator):
 
         if self.data.datetime.date(0).isoformat() < '2015-04-17':
             return
-        if self.data.datetime.date(0).isoformat() == '2019-07-12':
+        if self.data.datetime.date(0).isoformat() == '2015-12-21':
             print("1")
         if self.data.datetime.date(0).isoformat() == '2018-02-02':
             pass
@@ -383,7 +383,7 @@ class MACDBiasPositionManager(bt.Indicator):
             1.大幅乖离（短中、中长）之后，且ATR、乖离率未恢复到正常水平之前：
                 不进场
                 ----如果均线全部多头排列，且斜率全部向上，则进场
-            2.60日sma斜率大于0，且短、中、长期均线多头排列，则进场
+            2.60日sma斜率大于0，且短、中、长期均线多`头排列，则进场
             3.1、2的充分条件破线20日sma和ema
             4.均线密集不买
             '''
