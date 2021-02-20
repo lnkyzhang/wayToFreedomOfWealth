@@ -306,20 +306,20 @@ class MACDBiasPositionManager(bt.Indicator):
         买入：20日EMA或20日SMA全部拐头向上
         '''
         if self.l.shortbiasrank[0] > 0.5:
-            print("name: %5s, date: %s, macdsignalRank: %.3f, diff :%.3f, lowest hist: %.3f, lowest diff:%.3f natr:%.3f, atrPctRank: %.3f"
+            print("name: %5s, date: %s, macdsignalRank: %.3f, diff :%.3f, lowest hist: %.3f, lowest diff:%.3f natr:%.3f, atrPctRank: %.3f, riskLevel: %1d"
                   %(self.p.name, self.data.datetime.date(0).isoformat(), self.l.shortbiasrank[0], self.l.macdsignal[0], self.lowestHist[0],
-                  self.lowestDiff[0],  self.l.natr[0], self.l.natrRank[0]))
+                  self.lowestDiff[0],  self.l.natr[0], self.l.natrRank[0], self.riskLevel))
 
         if self.data.datetime.date(0).isoformat() < '2015-04-17':
             return
-        if self.data.datetime.date(0).isoformat() == '2015-12-21':
+        if self.data.datetime.date(0).isoformat() == '2017-09-21':
             print("1")
         if self.data.datetime.date(0).isoformat() == '2018-02-02':
             pass
 
         # 风险分级
         if self.riskLevel == 0:
-            if self.l.shortbiasrank[0] > self.p.msrThresholdValue or self.l.longbiasrank[0] > self.p.msrThresholdValue:
+            if self.l.shortbiasrank[0] > self.p.msrThresholdValue:
                 self.riskLevel = 1
         elif self.riskLevel == 1:
             if self.l.shortbiasrank[0] > 0.9 or self.l.longbiasrank[0] > 0.9:
@@ -369,11 +369,11 @@ class MACDBiasPositionManager(bt.Indicator):
                 # crossPrice = self.solveShortMidCrossPrice(self.sma20[0], self.data[-19], 20, self.sma60[0], self.data[-59], 60)
                 if abs(self.sma20[0] / self.sma60[0] - 1) < 0.02:
                     return
-                elif self.sma60[0] < self.sma60[-1] or self.sma60[0] > self.sma20[0]:
+                elif self.sma60[0] > self.sma20[0]:
                     self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
                     self.l.PositionPercent[0] = 0
                 else:
-                    self.l.OrderPrice[0] = max(self.ema60[0], self.data[-59])
+                    self.l.OrderPrice[0] = max(self.ema60[0],0)
                     self.l.PositionPercent[0] = 0
 
         else:
@@ -396,9 +396,11 @@ class MACDBiasPositionManager(bt.Indicator):
                 #     self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
                 #     self.l.PositionPercent[0] = 0.99
             else:
-                if abs(self.sma20[0] / self.sma60[0] - 1) < 0.05 and abs(self.sma60[0] / self.sma120[0] - 1) < 0.05 and abs(self.data[0] / self.sma20[0] -1) < 0.05:
-                    return
-                if self.sma60[0] > self.sma60[-1] and self.sma20[0] > self.sma60[0] and self.sma20[0] > self.sma20[-1] and self.ema20[0] > self.ema20[-1] \
+                # if abs(self.sma20[0] / self.sma60[0] - 1) < 0.05 and abs(self.sma60[0] / self.sma120[0] - 1) < 0.05 and abs(self.data[0] / self.sma20[0] -1) < 0.05:
+                #     return
+                # if self.sma60[0] > self.sma60[-1] and self.sma20[0] > self.sma60[0] and self.sma20[0] > self.sma20[-1] and self.ema20[0] > self.ema20[-1] \
+                #         and self.sma60[0] > self.sma120[0]:
+                if self.sma20[0] > self.sma60[0] \
                         and self.sma60[0] > self.sma120[0]:
                     self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
                     self.l.PositionPercent[0] = 0.99
