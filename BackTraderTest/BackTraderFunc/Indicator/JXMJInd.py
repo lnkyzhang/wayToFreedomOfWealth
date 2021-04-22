@@ -79,7 +79,8 @@ class JXMJIndicator(bt.Indicator):
         jxmj_sm = abs(self.smaShort / self.smaMid - 1) * 100
         jxmj_ml = abs(self.smaMid / self.smaLong - 1) * 100
         self.JXMJ = JXMJDayFsumIndicator(bt.Max(jxmj_cs,jxmj_sm,jxmj_ml), period=self.p.period_jxmj).l.JXMJFsum
-        self.l.JXMJ = bt.If( bt.And(self.JXMJ > self.p.jxmj_ThresholdValue, self.smaMid > self.smaLong), 1, 0)
+        # self.l.JXMJ = bt.If( bt.And(self.JXMJ > self.p.jxmj_ThresholdValue, self.smaMid > self.smaLong), 1, 0)
+        self.l.JXMJ = bt.If(bt.And(self.JXMJ >= self.p.jxmj_ThresholdValue), 1, 0)
 
         self.l.JXMJHoldState = self.data - self.data
         self.l.JXMJBuySellPoint = self.data - self.data
@@ -96,7 +97,7 @@ class JXMJIndicator(bt.Indicator):
         self.holdStateHigh = 0
 
     def next(self):
-        if self.data.datetime.date(0).isoformat() == '2016-07-12':
+        if self.data.datetime.date(0).isoformat() == '2015-11-27':
             print("111")
 
         if self.l.JXMJ[0] == 1:
@@ -123,10 +124,12 @@ class JXMJIndicator(bt.Indicator):
 
         if self.l.JXMJHoldState[0] == 1 and self.l.JXMJ[0] == 0:
             if self.l.BollRange[0] == 1:
+                # 直接拉起
                 self.l.JXMJBuySellPoint[0] = 1
                 self.l.OrderPrice[0] = self.emaShort[0]
                 self.l.PositionPercent[0] = 0.99
             else:
+                # 震仓
                 if self.l.BollRange[0] == -1:
                     if self.bollHisto[0] < self.bollHisto[-1]:
                         index = -1

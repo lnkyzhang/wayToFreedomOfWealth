@@ -1,6 +1,6 @@
 from dateutil.relativedelta import relativedelta
 from jqdatasdk import query, valuation, indicator, get_fundamentals, finance, get_bars, get_all_securities
-
+import jqdatasdk as jq
 from mt_com_setting import *
 import QUANTAXIS as QA
 
@@ -72,8 +72,9 @@ def mt_save_financial_from_JQData(stk, start_date, end_date):
         start_dt += delta
 
 def TestGetMinDataFromJQdata():
-    df = get_bars('000002.XSHE', 1000000, unit='5m', fields=['date', 'open', 'high', 'low', 'close', 'volume', 'factor'])
-    df.to_csv("格力5min")
+    df = get_bars('000002.XSHE', 50000, unit='5m', end_dt="2016-01-01", fields=['date', 'open', 'high', 'low', 'close', 'volume', 'factor'])
+    print(df)
+    df.to_csv("万科5min.cav")
 
 if __name__ == '__main__':
     # q = query(indicator).filter(indicator.code == '000001.XSHE')
@@ -84,10 +85,16 @@ if __name__ == '__main__':
     # mt_save_financial_from_JQData('finance.STK_INCOME_STATEMENT',"2005-01-01", "2020-04-16")
 
     # TestGetMinDataFromJQdata()
-    GetStockListToText()
+    # GetStockListToText()
 
+    # a = get_bars('000001.XSHE', 5000, unit='5min',fields=['date', 'open', 'high', 'low', 'close', 'volume', 'factor'],end_date="2008-08-01")
+    # print(a)
+    TestGetMinDataFromJQdata()
+    # jq.get_ticks("000002.XSHE",start_dt='2021-03-08', end_dt='2021-03-09')
 
+    # df = ts.pro_bar(ts_code='000001.SZ', adj=None, start_date='20200101', end_date='20210101',freq='60min')
+    # print(df)
 
-
+    
 
 

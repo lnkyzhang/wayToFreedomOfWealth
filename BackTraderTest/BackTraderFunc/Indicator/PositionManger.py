@@ -186,7 +186,7 @@ class MACDBiasPositionManager(bt.Indicator):
     '''
     macdHistMoveRank: macd 柱线图 中，当日值与前日值的差值，统计并排名
     '''
-    lines = ('holdState', 'natr','PositionPercent', 'OrderPrice', 'macd', 'macdsignal', 'macdhist', 'stop_long', 'natrRank', 'shortbiasrank', 'longbiasrank', 'macdHistMoveRank', 'jxml')
+    lines = ('holdState', 'natr','PositionPercent', 'OrderPrice', 'macd', 'macdsignal', 'macdhist', 'stop_long', 'natrRank', 'shortbiasrank', 'longbiasrank', 'macdHistMoveRank', 'jxml', 'riskLevel')
     plotinfo = dict(subplot=True, plotlinelabels=True)
 
     plotlines = dict(
@@ -310,11 +310,11 @@ class MACDBiasPositionManager(bt.Indicator):
                   %(self.p.name, self.data.datetime.date(0).isoformat(), self.l.shortbiasrank[0], self.l.macdsignal[0], self.lowestHist[0],
                   self.lowestDiff[0],  self.l.natr[0], self.l.natrRank[0]))
 
-        if self.data.datetime.date(0).isoformat() < '2015-04-17':
+        if self.data.datetime.date(0).isoformat() < '2010-04-17':
             return
         if self.data.datetime.date(0).isoformat() == '2015-12-21':
             print("1")
-        if self.data.datetime.date(0).isoformat() == '2018-02-02':
+        if self.data.datetime.date(0).isoformat() == '2013-02-02':
             pass
 
         # 风险分级
@@ -326,6 +326,8 @@ class MACDBiasPositionManager(bt.Indicator):
                 pass
             elif self.l.natrRank[0] < 0.6:
                 self.riskLevel = 0
+
+        self.l.riskLevel[0] = self.riskLevel
 
 
 

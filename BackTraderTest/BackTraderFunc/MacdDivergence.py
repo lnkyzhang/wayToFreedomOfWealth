@@ -124,9 +124,17 @@ def macd_extend_data(df):
                     res_df.loc[cross_df.iloc[ii].name, ['divergence_lastPoint']] = cross_df.iloc[ii - jj].name
                     break
 
+    def findContinueDiverse(df):
+        df.loc[df['divergence_top'] == True, "divergence_continue"] = df.loc[
+            df[df['divergence_top'] == True]['divergence_lastPoint'], 'divergence_top'].values
+
+        df.loc[df['divergence_bottom'] == True, "divergence_continue"] = df.loc[
+            df[df['divergence_bottom'] == True]['divergence_lastPoint'], 'divergence_bottom'].values
 
     findDiverse(gold_cross_df)
     findDiverse(death_cross_df)
+
+    findContinueDiverse(res_df)
 
     return res_df
 
@@ -144,7 +152,7 @@ def macd_extend_data(df):
 
 if __name__ == '__main__':
 
-    df = pd.read_csv("../samples/mixing-timeframes/000651.csv")
+    df = pd.read_csv(r"D:\script\waytofreedom\wayToFreedomOfWealth\BackTraderTest\BackTraderFunc\600029.csv")
 
-    macd_extend_data(df)
+    macd_extend_data(df[:100])
 

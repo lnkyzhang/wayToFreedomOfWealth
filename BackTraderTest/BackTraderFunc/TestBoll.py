@@ -35,8 +35,9 @@ from QUANTAXIS.QAData.data_resample import QA_data_min_to_day
 from backtrader import indicator, LinePlotterIndicator
 from backtrader.analyzers import TimeReturn, Transactions
 
-from BackTraderTest.BackTraderFunc.DataReadFromCsv import read_dataframe
+from BackTraderTest.BackTraderFunc.DataReadFromCsv import read_dataframe, readFromDb
 from BackTraderTest.BackTraderFunc.DataResample import data_min_resample
+from BackTraderTest.BackTraderFunc.Indicator.BreakInd import PeaksInd
 from BackTraderTest.BackTraderFunc.Indicator.DFGLInd import DFGLInd
 from BackTraderTest.BackTraderFunc.Indicator.EntryMacdDivergence import MACDEMAEntryPoint
 from BackTraderTest.BackTraderFunc.Indicator.JXMJInd import JXMJIndicator
@@ -58,11 +59,11 @@ pd.set_option('display.width', 300)
 
 class pandas_divergence(bt.feeds.PandasData):
     # Add a 'pe' line to the inherited ones from the base class
-    lines = ('divergence_top', 'divergence_bottom',)
+    lines = ('divergence_top', 'divergence_bottom','divergence_continue')
 
     # openinterest in GenericCSVData has index 7 ... add 1
     # add the parameter to the parameters inherited from the base class
-    params = (('divergence_top', 15), ('divergence_bottom', 16),)
+    params = (('divergence_top', -1), ('divergence_bottom', -1), ('divergence_continue', -1))
 
 
 class pandas_tripleScreen(bt.feeds.PandasData):
@@ -278,6 +279,8 @@ class St(bt.Strategy):
 
     def __init__(self):
 
+        # self.peaks = PeaksInd()
+
         # 布林带测试
         # self.bollPosition = BollPositionManager(self.data)
         # self.bollPosition = SMAPositionManager(self.data2)
@@ -296,19 +299,23 @@ class St(bt.Strategy):
         # self.ema20min60 = bt.talib.EMA(self.data1, timeperiod=20)
         # self.sma20min60 = bt.talib.SMA(self.data1, timeperiod=20)
         # self.ema60min60 = bt.talib.EMA(self.data1, timeperiod=60)
-        # self.sma60min60 = bt.talib.SMA(self.data1, timeperiod=60)
+        # self.sma60min60 = bt.talib.SMA(self.data1, timeperiod=60)1
         # self.ema120min60 = bt.talib.EMA(self.data1, timeperiod=120)
         # self.sma120min60 = bt.talib.SMA(self.data1, timeperiod=120)
 
-        self.ema20day = bt.talib.EMA(self.data, timeperiod=20)
+        #self.ema20day = bt.talib.EMA(self.data, timeperiod=20)
         self.sma20day = bt.talib.SMA(self.data, timeperiod=20)
-        self.ema60day = bt.talib.EMA(self.data, timeperiod=60)
+        #self.ema60day = bt.talib.EMA(self.data, timeperiod=60)
         self.sma60day = bt.talib.SMA(self.data, timeperiod=60)
-        self.ema120day = bt.talib.EMA(self.data, timeperiod=120)
+        #self.ema120day = bt.talib.EMA(self.data, timeperiod=120)
         self.sma120day = bt.talib.SMA(self.data, timeperiod=120)
 
 
         self.JXMJIndicator = JXMJIndicator(self.data)
+
+        # self.divergences = MACDEMAEntryPoint(self.data)
+        # self.divergences1 = MACDEMAEntryPoint(self.data1)
+        # self.divergences2 = MACDEMAEntryPoint(self.data2)
 
 
 
@@ -473,21 +480,21 @@ def runstrat():
     # Data feed kwargs
     # '15min', '30min', '60min',
     # dataframe = read_dataframe(args.data, args.years, ['15min', '60min', 'd'])
-    # dataframe = read_dataframe(args.data, args.years, ['15min', '60min', 'd'])
+    dataframe = readFromDb(args.data, args.fq, args.years,  ['15min', '60min', 'd'])
     # for i in range(len(dataframe)):
     #     cerebro.adddata(bt.feeds.PandasData(dataname=dataframe[i]))
 
 
-    # for i in range(len(dataframe)):
-    #     temp_df = macd_extend_data(dataframe[i])
-    #     cerebro.adddata(pandas_divergence(dataname=temp_df,
-    #                                       divergence_top=temp_df.columns.to_list().index('divergence_top'),
-    #                                       divergence_bottom=temp_df.columns.to_list().index('divergence_bottom')))
+    for i in range(len(dataframe)):
+        temp_df = macd_extend_data(dataframe[i])
+        cerebro.adddata(pandas_divergence(dataname=temp_df,
+                                          divergence_top=temp_df.columns.to_list().index('divergence_top'),
+                                          divergence_bottom=temp_df.columns.to_list().index('divergence_bottom')))
 
     # dataframe = QAIndex2btData("159934", '2014-01-01', '2020-10-13')
-    dataframe = QAStock2btData("000651", '2014-01-01', '2020-10-13')
+    # dataframe = QAStock2btData("000002", '2012-01-01', '2021-01-01')
     # dataframe = read_dataframe('000651.csv', '2014-2020', ['d'])[0]
-    cerebro.adddata(bt.feeds.PandasData(dataname=dataframe))
+    # cerebro.adddata(bt.feeds.PandasData(dataname=dataframe))
 
     cerebro.addstrategy(St)
 
@@ -518,10 +525,14 @@ def parse_args():
         description='Sample for pivot point and cross plotting')
 
     parser.add_argument('--data', required=False,
-                        default='000651.csv',
+                        default='600600.SH',
                         help='Data to be read in')
 
-    parser.add_argument('--years', default='2014-2020',
+    parser.add_argument('--fq', required=False,
+                        default='hfq',
+                        help='fq')
+
+    parser.add_argument('--years', default='2012-2020',
                         help='Formats: YYYY-ZZZZ / YYYY / YYYY- / -ZZZZ')
 
     parser.add_argument('--multi', required=False, action='store_true',

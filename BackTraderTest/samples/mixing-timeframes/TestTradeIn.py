@@ -200,22 +200,22 @@ if __name__ == '__main__':
 
 
 
-    df = ReadDataFormLocal("analysisData")
-    df = LossRateDataPretreatment(df, 10)
-
-    # profile = df.profile_report(title='Titanic Dataset')
-    # profile.to_file(output_file='./result/titanic_report_deleteLoseRate0.html')
-
-    dfNor = df[df["isLastSmallPeriod"] == False]
-    dfLst = df[df["isLastSmallPeriod"] == True]
-    dfNor = dfNor[df["smallPeriodDays"] > 5]
-
-    # dfNor = dfNor[df["lossRate"] < -0.07]
-    print(dfNor.corr())
-    # dfNor = dfNor[df["s_bias"] < 0.1232301735]
+    # df = ReadDataFormLocal("analysisData")
+    # df = LossRateDataPretreatment(df, 10)
+    #
+    # # profile = df.profile_report(title='Titanic Dataset')
+    # # profile.to_file(output_file='./result/titanic_report_deleteLoseRate0.html')
+    #
+    # dfNor = df[df["isLastSmallPeriod"] == False]
+    # dfLst = df[df["isLastSmallPeriod"] == True]
+    # dfNor = dfNor[df["smallPeriodDays"] > 5]
+    #
+    # # dfNor = dfNor[df["lossRate"] < -0.07]
     # print(dfNor.corr())
-    sns.pairplot(dfNor)
-    plt.show()
+    # # dfNor = dfNor[df["s_bias"] < 0.1232301735]
+    # # print(dfNor.corr())
+    # sns.pairplot(dfNor)
+    # plt.show()
 
     # profile = dfNor.profile_report(title='筛选lossRate小于-0.07')
     # profile.to_file(output_file='./result/筛选lossRate小于-0.07.html')
@@ -224,3 +224,6 @@ if __name__ == '__main__':
     # profile.to_file(output_file='./result/titanic_report_deleteLoseRate0Last.html')
 
 
+    data = yf.download("000001.sz",interval='60m')
+
+    print(data)
