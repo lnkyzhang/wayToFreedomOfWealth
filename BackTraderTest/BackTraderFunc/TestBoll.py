@@ -372,41 +372,18 @@ class St(bt.Strategy):
         if self.data.datetime.date(0).isoformat() == '2020-01-06':
             print("123123")
 
-
-
         if self.position.size > 0:
-            if self.JXMJIndicator.JXMJHoldState[0] == 1:
-                return
 
-            if self.JXMJIndicator.PositionPercent[0] == 0:
-                if self.data.low[0] < self.JXMJIndicator.OrderPrice[0]:
-                    self.order = self.order_target_percent(target=self.JXMJIndicator.PositionPercent[0],
-                                                           price=self.JXMJIndicator.OrderPrice[0],
-                                                           exectype=bt.Order.Stop)
-
-            elif self.macdBiasPositionDay.PositionPercent[0] == 0:
+            if self.macdBiasPositionDay.PositionPercent[0] == 0:
                 if self.data.low[0] < self.macdBiasPositionDay.OrderPrice[0]:
                     self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
                                                            price=self.macdBiasPositionDay.OrderPrice[0],
                                                            exectype=bt.Order.Stop)
 
         else:
-            if self.JXMJIndicator.PositionPercent[0] == 0.99:
-                self.order = self.order_target_percent(target=self.JXMJIndicator.PositionPercent[0],
-                                                       # price=self.JXMJIndicator.OrderPrice[0],
-                                                       exectype=bt.Order.Market)
-                # if self.data.open[0] > self.JXMJIndicator.OrderPrice[0]:
-                #     self.order = self.order_target_percent(target=self.JXMJIndicator.PositionPercent[0],
-                #                                            price=self.data.open[0],
-                #                                            exectype=bt.Order.Stop)
-                # elif self.data.high[0] > self.JXMJIndicator.OrderPrice[0]:
-                #     self.order = self.order_target_percent(target=self.JXMJIndicator.PositionPercent[0],
-                #                                            price=self.JXMJIndicator.OrderPrice[0],
-                #                                            exectype=bt.Order.Stop)
 
-            elif self.macdBiasPositionDay.PositionPercent[0] == 0.99:
-                if self.JXMJIndicator.l.JXMJ[0] == 1:
-                    return
+            if self.macdBiasPositionDay.PositionPercent[0] == 0.99:
+
                 if self.data.open[0] > self.macdBiasPositionDay.OrderPrice[0]:
                     self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
                                                            price=self.data.open[0],
@@ -417,6 +394,53 @@ class St(bt.Strategy):
                                                            exectype=bt.Order.Stop)
 
 
+    # def next_open(self):
+    #     if self.data.datetime.date(0).isoformat() == '2020-01-06':
+    #         print("123123")
+    #
+    #
+    #
+    #     if self.position.size > 0:
+    #         if self.JXMJIndicator.JXMJHoldState[0] == 1:
+    #             return
+    #
+    #         if self.JXMJIndicator.PositionPercent[0] == 0:
+    #             if self.data.low[0] < self.JXMJIndicator.OrderPrice[0]:
+    #                 self.order = self.order_target_percent(target=self.JXMJIndicator.PositionPercent[0],
+    #                                                        price=self.JXMJIndicator.OrderPrice[0],
+    #                                                        exectype=bt.Order.Stop)
+    #
+    #         elif self.macdBiasPositionDay.PositionPercent[0] == 0:
+    #             if self.data.low[0] < self.macdBiasPositionDay.OrderPrice[0]:
+    #                 self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
+    #                                                        price=self.macdBiasPositionDay.OrderPrice[0],
+    #                                                        exectype=bt.Order.Stop)
+    #
+    #     else:
+    #         if self.JXMJIndicator.PositionPercent[0] == 0.99:
+    #             self.order = self.order_target_percent(target=self.JXMJIndicator.PositionPercent[0],
+    #                                                    # price=self.JXMJIndicator.OrderPrice[0],
+    #                                                    exectype=bt.Order.Market)
+    #             # if self.data.open[0] > self.JXMJIndicator.OrderPrice[0]:
+    #             #     self.order = self.order_target_percent(target=self.JXMJIndicator.PositionPercent[0],
+    #             #                                            price=self.data.open[0],
+    #             #                                            exectype=bt.Order.Stop)
+    #             # elif self.data.high[0] > self.JXMJIndicator.OrderPrice[0]:
+    #             #     self.order = self.order_target_percent(target=self.JXMJIndicator.PositionPercent[0],
+    #             #                                            price=self.JXMJIndicator.OrderPrice[0],
+    #             #                                            exectype=bt.Order.Stop)
+    #
+    #         elif self.macdBiasPositionDay.PositionPercent[0] == 0.99:
+    #             if self.JXMJIndicator.l.JXMJ[0] == 1:
+    #                 return
+    #             if self.data.open[0] > self.macdBiasPositionDay.OrderPrice[0]:
+    #                 self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
+    #                                                        price=self.data.open[0],
+    #                                                        exectype=bt.Order.Stop)
+    #             elif self.data.high[0] > self.macdBiasPositionDay.OrderPrice[0]:
+    #                 self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
+    #                                                        price=self.macdBiasPositionDay.OrderPrice[0],
+    #                                                        exectype=bt.Order.Stop)
 
 
 
