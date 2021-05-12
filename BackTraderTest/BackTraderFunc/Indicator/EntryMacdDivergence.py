@@ -5,7 +5,7 @@ import backtrader as bt
     1.MACD底背离
     2.价格在20日ema均线以上
 '''
-class MACDEMAEntryPoint(bt.Indicator):
+class LeiGongInd(bt.Indicator):
     lines = ('top_divergences', 'bottom_divergences', 'entryPoint', )
     plotinfo = dict(subplot=True, plotlinelabels=True)
 

@@ -39,8 +39,8 @@ from BackTraderTest.BackTraderFunc.DataReadFromCsv import read_dataframe, readFr
 from BackTraderTest.BackTraderFunc.DataResample import data_min_resample
 from BackTraderTest.BackTraderFunc.Indicator.BreakInd import PeaksInd
 from BackTraderTest.BackTraderFunc.Indicator.DFGLInd import DFGLInd
-from BackTraderTest.BackTraderFunc.Indicator.EntryMacdDivergence import MACDEMAEntryPoint
 from BackTraderTest.BackTraderFunc.Indicator.JXMJInd import JXMJIndicator
+from BackTraderTest.BackTraderFunc.Indicator.LeiGongInd import NormalMAInd
 from BackTraderTest.BackTraderFunc.Indicator.PositionManger import BollPositionManager, SMAPositionManager, \
     MACDSMAPositionManager, MACDBiasPositionManager, DeviateIndicator
 from BackTraderTest.BackTraderFunc.Indicator.StopTrailer import StopTrailer
@@ -303,13 +303,7 @@ class St(bt.Strategy):
         # self.ema120min60 = bt.talib.EMA(self.data1, timeperiod=120)
         # self.sma120min60 = bt.talib.SMA(self.data1, timeperiod=120)
 
-        #self.ema20day = bt.talib.EMA(self.data, timeperiod=20)
-        self.sma20day = bt.talib.SMA(self.data, timeperiod=20)
-        #self.ema60day = bt.talib.EMA(self.data, timeperiod=60)
-        self.sma60day = bt.talib.SMA(self.data, timeperiod=60)
-        #self.ema120day = bt.talib.EMA(self.data, timeperiod=120)
-        self.sma120day = bt.talib.SMA(self.data, timeperiod=120)
-
+        self.nomal = NormalMAInd()
 
         self.JXMJIndicator = JXMJIndicator(self.data)
 
@@ -504,21 +498,22 @@ def runstrat():
     # Data feed kwargs
     # '15min', '30min', '60min',
     # dataframe = read_dataframe(args.data, args.years, ['15min', '60min', 'd'])
-    dataframe = readFromDb(args.data, args.fq, args.years,  ['15min', '60min', 'd'])
+    # dataframe = readFromDb(args.data, args.fq, args.years,  ['15min', '60min', 'd'])
     # for i in range(len(dataframe)):
     #     cerebro.adddata(bt.feeds.PandasData(dataname=dataframe[i]))
 
 
-    for i in range(len(dataframe)):
-        temp_df = macd_extend_data(dataframe[i])
-        cerebro.adddata(pandas_divergence(dataname=temp_df,
-                                          divergence_top=temp_df.columns.to_list().index('divergence_top'),
-                                          divergence_bottom=temp_df.columns.to_list().index('divergence_bottom')))
+    # for i in range(len(dataframe)):
+    #     temp_df = macd_extend_data(dataframe[i])
+    #     cerebro.adddata(pandas_divergence(dataname=temp_df,
+    #                                       divergence_top=temp_df.columns.to_list().index('divergence_top'),
+    #                                       divergence_bottom=temp_df.columns.to_list().index('divergence_bottom')))
 
     # dataframe = QAIndex2btData("159934", '2014-01-01', '2020-10-13')
-    # dataframe = QAStock2btData("000002", '2012-01-01', '2021-01-01')
+    dataframe = QAStock2btData("000066", '2012-01-01', '2021-01-01')
     # dataframe = read_dataframe('000651.csv', '2014-2020', ['d'])[0]
-    # cerebro.adddata(bt.feeds.PandasData(dataname=dataframe))
+    # dataframe = readFromDb(args.data, args.fq, args.years, ['d'])[0]
+    cerebro.adddata(bt.feeds.PandasData(dataname=dataframe))
 
     cerebro.addstrategy(St)
 
@@ -549,7 +544,7 @@ def parse_args():
         description='Sample for pivot point and cross plotting')
 
     parser.add_argument('--data', required=False,
-                        default='600600.SH',
+                        default='000056.SZ',
                         help='Data to be read in')
 
     parser.add_argument('--fq', required=False,

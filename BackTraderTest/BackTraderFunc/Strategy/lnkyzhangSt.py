@@ -1,7 +1,7 @@
 import backtrader as bt
 
-from BackTraderTest.BackTraderFunc.Indicator.EntryMacdDivergence import MACDEMAEntryPoint
 from BackTraderTest.BackTraderFunc.Indicator.JXMJInd import JXMJIndicator
+from BackTraderTest.BackTraderFunc.Indicator.LeiGongInd import LeiGongInd, NormalMAInd
 from BackTraderTest.BackTraderFunc.Indicator.PositionManger import MACDBiasPositionManager
 from BackTraderTest.BackTraderFunc.Indicator.StateInd import StateInd
 
@@ -28,7 +28,7 @@ class lnkyzhangSt(bt.Strategy):
         # self.bollPosition = MACDSMAPositionManager(self.data)
         # self.macdBiasPosition60min = MACDBiasPositionManager(self.data)
         # self.macdBiasPosition60min = MACDBiasPositionManager(self.data, name='15min')
-        # self.macdBiasPositionDay = MACDBiasPositionManager(self.data3,  name='day')
+        self.macdBiasPositionDay = LeiGongInd(self.data,  name='day')
         # self.ema20min15 = bt.talib.EMA(self.data, timeperiod=20)
         # self.sma20min15 = bt.talib.SMA(self.data, timeperiod=20)
         # self.ema60min15 = bt.talib.EMA(self.data, timeperiod=60)
@@ -43,12 +43,7 @@ class lnkyzhangSt(bt.Strategy):
         # self.ema120min60 = bt.talib.EMA(self.data1, timeperiod=120)
         # self.sma120min60 = bt.talib.SMA(self.data1, timeperiod=120)
 
-        #self.ema20day = bt.talib.EMA(self.data, timeperiod=20)
-        #self.sma20day = bt.talib.SMA(self.data3, timeperiod=20)
-        #self.ema60day = bt.talib.EMA(self.data, timeperiod=60)
-        #self.sma60day = bt.talib.SMA(self.data3, timeperiod=60)
-        #self.ema120day = bt.talib.EMA(self.data, timeperiod=120)
-        #self.sma120day = bt.talib.SMA(self.data3, timeperiod=120)
+        self.normal = NormalMAInd()
 
 
         self.JXMJIndicator = JXMJIndicator(self.data)
@@ -112,8 +107,29 @@ class lnkyzhangSt(bt.Strategy):
 
 
     def next_open(self):
-        pass
+        if self.data.datetime.date(0).isoformat() == '2020-01-06':
+            print("123123")
 
+        if self.position.size > 0:
+
+            if self.macdBiasPositionDay.PositionPercent[0] == 0:
+                if self.data.low[0] < self.macdBiasPositionDay.OrderPrice[0]:
+                    self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
+                                                           price=self.macdBiasPositionDay.OrderPrice[0],
+                                                           exectype=bt.Order.Stop)
+
+        else:
+
+            if self.macdBiasPositionDay.PositionPercent[0] == 0.99:
+
+                if self.data.open[0] > self.macdBiasPositionDay.OrderPrice[0]:
+                    self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
+                                                           price=self.data.open[0],
+                                                           exectype=bt.Order.Stop)
+                elif self.data.high[0] > self.macdBiasPositionDay.OrderPrice[0]:
+                    self.order = self.order_target_percent(target=self.macdBiasPositionDay.PositionPercent[0],
+                                                           price=self.macdBiasPositionDay.OrderPrice[0],
+                                                           exectype=bt.Order.Stop)
 
 
 

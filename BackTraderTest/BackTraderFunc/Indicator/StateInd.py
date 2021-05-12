@@ -59,7 +59,7 @@ class StateInd(bt.Indicator):
 
     '''
     # alias = ('PctRankAbs',)
-    lines = ('State',)
+    lines = ('State','priceIntense','natrIntense','bollIntense')
     plotinfo = dict(
         subplot=True, plotlinelabels=True,
     )
@@ -79,6 +79,9 @@ class StateInd(bt.Indicator):
     def __init__(self):
         self.jxmj = JXMJIndicator(self.data)
         self.l.State = bt.If(self.jxmj.l.JXMJ == 1, 1, self.l.State)
+        self.l.priceIntense = bt.If(self.jxmj.l.priceIntense == 1, 0.7, float('nan'))
+        self.l.natrIntense = bt.If(self.jxmj.l.natrIntense == 1, 0.4, float('nan'))
+        self.l.bollIntense = bt.If(self.jxmj.l.bollIntense == 1, 0.1, float('nan'))
 
 
 

@@ -9,7 +9,7 @@ from BackTraderTest.BackTraderFunc.Strategy.LeiGongSt import LeiGoneSt
 from BackTraderTest.BackTraderFunc.Strategy.MacdDivergenceSt import MacdDivergenceSt
 from BackTraderTest.BackTraderFunc.Strategy.lnkyzhangSt import lnkyzhangSt
 from BackTraderTest.BackTraderFunc.TestBoll import pandas_divergence
-from BackTraderTest.BackTraderFunc.makeData import QAStock2btData
+from BackTraderTest.BackTraderFunc.makeData import QAStock2btData, QAStock2btDataOnline
 from BackTraderTest.BackTraderFunc.DataReadFromCsv import read_dataframe, readFromDb
 
 
@@ -24,9 +24,9 @@ def runstrat():
     # '15min', '30min', '60min',
     # dataframe = read_dataframe(args.data, args.years, ['15min', '60min', 'd'])
     # dataframe = readFromDb(args.data, args.fq, args.years, ["5min", '15min', '60min', 'd'])
-    dataframe = readFromDb(args.data, args.fq, args.years, ['d'])
-    for i in range(len(dataframe)):
-        cerebro.adddata(bt.feeds.PandasData(dataname=dataframe[i]))
+    # dataframe = readFromDb(args.data, args.fq, args.years, ['d'])
+    # for i in range(len(dataframe)):
+    #     cerebro.adddata(bt.feeds.PandasData(dataname=dataframe[i]))
 
 
     # for i in range(len(dataframe)):
@@ -36,9 +36,9 @@ def runstrat():
     #                                       divergence_bottom=temp_df.columns.to_list().index('divergence_bottom')))
 
     # dataframe = QAIndex2btData("159934", '2014-01-01', '2020-10-13')
-    # dataframe = QAStock2btData("000002", '2008-01-01', '2021-02-26')
+    dataframe = QAStock2btData("000002", '2008-01-01', '2021-04-30')
     # dataframe = read_dataframe('000651.csv', '2014-2020', ['d'])[0]
-    # cerebro.adddata(bt.feeds.PandasData(dataname=dataframe))
+    cerebro.adddata(bt.feeds.PandasData(dataname=dataframe))
 
     cerebro.addstrategy(lnkyzhangSt)
     # cerebro.addstrategy(MacdDivergenceSt)
@@ -71,14 +71,14 @@ def parse_args():
         description='Sample for pivot point and cross plotting')
 
     parser.add_argument('--data', required=False,
-                        default='600600.SH',
+                        default='000030.SZ',
                         help='Data to be read in')
 
     parser.add_argument('--fq', required=False,
                         default='hfq',
                         help='fq')
 
-    parser.add_argument('--years', default='2010-2020',
+    parser.add_argument('--years', default='2010-2021',
                         help='Formats: YYYY-ZZZZ / YYYY / YYYY- / -ZZZZ')
 
     parser.add_argument('--multi', required=False, action='store_true',

@@ -1,6 +1,6 @@
 import backtrader as bt
 
-from BackTraderTest.BackTraderFunc.Indicator.EntryMacdDivergence import MACDEMAEntryPoint
+
 from BackTraderTest.BackTraderFunc.Indicator.JXMJInd import JXMJIndicator
 from BackTraderTest.BackTraderFunc.Indicator.PositionManger import MACDBiasPositionManager
 

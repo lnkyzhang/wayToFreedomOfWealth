@@ -7,180 +7,42 @@ from backtrader.indicators import BaseApplyN
 from BackTraderTest.BackTraderFunc.Indicator.PectRankAbsInd import PercentRankAbs
 from BackTraderTest.BackTraderFunc.Indicator.StopTrailer import StopTrailer
 
-'''
-布林带仓位管理
-'''
+class NormalMAInd(bt.Indicator):
+    lines = (
+    'sma_s', 'sma_m', 'sma_l', 'ema_s', 'ema_m', 'ema_l')
 
+    plotinfo = dict(subplot=False, plotlinelabels=True)
 
-class BollPositionManager(bt.Indicator):
-    lines = ('PositionPercent',)
-    plotinfo = dict(subplot=True, plotlinelabels=True)
-
-    params = dict(
-        bollperiod=20,
-        devfactor=2.0,
+    plotlines = dict(
+        sma_s=dict(color='b',),
+        sma_m=dict(color='y',),
+        sma_l=dict(color='m', ),
+        ema_s=dict(ls='--', color='b'),
+        ema_m=dict(ls='--', color='y'),
+        ema_l=dict(ls='--', color='m'),
     )
 
-    def __init__(self):
-        self.strat = self._owner  # alias for clarity
-        # boll
-        self.boll = bt.ind.BollingerBands(self.data, period=self.p.bollperiod, devfactor=self.p.devfactor)
-        self.lastRelPos = -1
 
-    def next(self):
-        curRelPos = self.relativePosition()
-        widthPercent = (self.boll.l.top[0] - self.boll.l.bot[0]) / self.boll.l.mid[0]
-
-        posPercent = (0.6 - widthPercent) * 2
-        if posPercent > 1:
-            posPercent = 0.99
-        elif posPercent < 0.2:
-            posPercent = 0.2
-
-        if curRelPos == 0:
-            self.l.PositionPercent[0] = posPercent / 2
-        elif curRelPos == 1:
-            self.l.PositionPercent[0] = posPercent
-        elif curRelPos == 2:
-            self.l.PositionPercent[0] = 0
-
-    def relativePosition(self):
-        '''
-        相对布林带的相对位置
-        :param rail:上轨 中轨 或者 下轨 之一
-        :return: 0：高于上轨 1：上轨和中轨之间  2：低于中轨
-        '''
-        if self.data.low[0] > self.boll.l.top[0]:
-            return 0
-        elif self.boll.l.top[0] > self.data[0] > self.boll.l.mid[0]:
-            return 1
-        else:
-            return 2
-
-
-'''
-均线仓位管理
-低于均线清仓，高于均线满仓
-'''
-
-
-class SMAPositionManager(bt.Indicator):
-    lines = ('PositionPercent', 'OrderPrice', 'sma20Slope', 'ema20Slope')
-    plotinfo = dict(subplot=True, plotlinelabels=True)
-
-    params = dict(
-        period=20,
-    )
+    # plotlines = dict(
+    #     Peaks=dict(marker='*', markersize=8.0, color='black', fillstyle='full'),
+    #     Bottoms=dict(marker=".", markersize=8.0, color='black', fillstyle='full'),
+    #     # expired=dict(marker='s', markersize=8.0, color='red', fillstyle='full')
+    # )
 
     def __init__(self):
-        self.strat = self._owner  # alias for clarity
-        # sma
-        # self.sma = bt.ind.SMA(self.data, period=self.p.period)
-        self.sma20 = bt.talib.SMA(self.data, timeperiod=self.p.period)
-        self.ema20 = bt.talib.EMA(self.data, timeperiod=self.p.period)
-        self.sma60 = bt.talib.SMA(self.data, timeperiod=60)
-        self.l.sma20Slope = self.sma20Slope = bt.talib.LINEARREG_SLOPE(self.sma20, timeperiod=2) * 100
-        self.l.ema20Slope = self.ema20Slope = bt.talib.LINEARREG_SLOPE(self.ema20, timeperiod=2) * 100
-        self.sma60Slope = bt.talib.LINEARREG_SLOPE(self.sma60, 1)
-
-    def next(self):
-        '''
-        卖出：20日EMA或20日SMA任一个拐头向下
-        买入：20日EMA或20日SMA全部拐头向上
-        '''
-        if self.strat.position.size > 0:
-            # 20日的ema和sma有一个拐头向下
-            self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
-            self.l.PositionPercent[0] = 0
-        else:
-            # 20日的ema和sma全部拐头向上
-            self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
-            self.l.PositionPercent[0] = 0.99
-
-        '''
-        卖出：20日EMA拐头向下
-        买入：20日EMA拐头向上
-        '''
-        # if self.strat.position.size > 0:
-        #     # 20日的ema和sma有一个拐头向下
-        #     self.l.OrderPrice[0] = self.ema20[0]
-        #     self.l.PositionPercent[0] = 0
-        # else:
-        #     # 20日的ema和sma有一个拐头向上
-        #     self.l.OrderPrice[0] = self.ema20[0]
-        #     self.l.PositionPercent[0] = 0.99
-
-
-'''
-macd和ema的
-'''
-
-
-class MACDSMAPositionManager(bt.Indicator):
-    lines = ('PositionPercent', 'OrderPrice', 'sma20Slope', 'ema20Slope', 'macd', 'macdsignal', 'macdhist')
-    plotinfo = dict(subplot=True, plotlinelabels=True)
-
-    params = dict(
-        period=20,
-    )
-
-    def __init__(self):
-        self.strat = self._owner  # alias for clarity
-        # sma
-        # self.sma = bt.ind.SMA(self.data, period=self.p.period)
-        self.sma20 = bt.talib.SMA(self.data, timeperiod=self.p.period)
-        self.ema20 = bt.talib.EMA(self.data, timeperiod=self.p.period)
-        self.sma60 = bt.talib.SMA(self.data, timeperiod=60)
-        self.l.sma20Slope = self.sma20Slope = bt.talib.LINEARREG_SLOPE(self.sma20, timeperiod=2) * 100
-        self.l.ema20Slope = self.ema20Slope = bt.talib.LINEARREG_SLOPE(self.ema20, timeperiod=2) * 100
-        self.sma60Slope = bt.talib.LINEARREG_SLOPE(self.sma60, 1)
-
-        self.macd = bt.ind.MACDHisto(self.data, period_me1=20, period_me2=60, period_signal=9)
-        self.l.macd = self.macd.macd
-        self.l.macdsignal = self.macd.signal
-        self.l.macdhist = self.macd.histo
-        # self.macdhistSlope = bt.talib.LINEARREG_SLOPE(self.l.macdhist, timeperiod=2)
-
-    def next(self):
-        '''
-        卖出：20日EMA或20日SMA任一个拐头向下
-        买入：20日EMA或20日SMA全部拐头向上
-        '''
-        if self.data.datetime.date(0).isoformat() == '2016-02-19':
-            print("123123")
-        if self.strat.position.size > 0:
-            if self.l.macdhist[0] < self.l.macdhist[-1] > 0:
-                # 20日的ema和sma有一个拐头向下
-                self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
-                self.l.PositionPercent[0] = 0
-
-        elif self.l.macdhist[0] > self.l.macdhist[-1] > -0.1 and self.l.macdsignal > -1:
-            # 20日的ema和sma全部拐头向上
-            self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
-            self.l.PositionPercent[0] = 0.99
-        else:
-            self.l.PositionPercent[0] = -1
-
-        '''
-        卖出：20日EMA拐头向下
-        买入：20日EMA拐头向上
-        '''
-        # if self.strat.position.size > 0:
-        #     # 20日的ema和sma有一个拐头向下
-        #     self.l.OrderPrice[0] = self.ema20[0]
-        #     self.l.PositionPercent[0] = 0
-        # else:
-        #     # 20日的ema和sma有一个拐头向上
-        #     self.l.OrderPrice[0] = self.ema20[0]
-        #     self.l.PositionPercent[0] = 0.99
-
+        self.l.ema_s = bt.talib.EMA(self.data, timeperiod=20)
+        self.l.sma_s = bt.talib.SMA(self.data, timeperiod=20)
+        self.l.ema_m = bt.talib.EMA(self.data, timeperiod=60)
+        self.l.sma_m = bt.talib.SMA(self.data, timeperiod=60)
+        self.l.ema_l = bt.talib.EMA(self.data, timeperiod=120)
+        self.l.sma_l = bt.talib.SMA(self.data, timeperiod=120)
 
 '''
 增加乖离率
 '''
 
 
-class MACDBiasPositionManager(bt.Indicator):
+class LeiGongInd(bt.Indicator):
     # lines = ('holdState', 'pctAtrPrice','PositionPercent', 'OrderPrice', 'sma20Slope', 'ema20Slope', 'macd', 'macdsignal', 'macdhist', 'macdlong',
     #          'macdlongsignal', 'macdlonghist', 'nextlevel', 'stop_long', )
     '''
@@ -198,6 +60,7 @@ class MACDBiasPositionManager(bt.Indicator):
         macdsignal=dict(_plotskip='True', ),
         macd=dict(_plotskip='True', ),
         macdHistMoveRank=dict(_plotskip='True', ),
+        riskLevel=dict(color='k'),
         # macdhist=dict( _method='bar',),
         # pctAtrPrice=dict(_plotskip='True', ),
     )
@@ -211,7 +74,6 @@ class MACDBiasPositionManager(bt.Indicator):
     def __init__(self):
         self.strat = self._owner  # alias for clarity
         # sma
-        # self.sma = bt.ind.SMA(self.data, period=self.p.period)
         self.sma20 = bt.talib.SMA(self.data, timeperiod=self.p.period)
         self.ema20 = bt.talib.EMA(self.data, timeperiod=self.p.period)
         self.sma60 = bt.talib.SMA(self.data, timeperiod=60)
@@ -219,32 +81,21 @@ class MACDBiasPositionManager(bt.Indicator):
         self.sma120 = bt.talib.SMA(self.data, timeperiod=120)
         self.ema120 = bt.talib.EMA(self.data, timeperiod=120)
 
-        # self.l.sma20Slope = self.sma20Slope = bt.talib.LINEARREG_SLOPE(self.sma20, timeperiod=2) * 100
-        # self.l.ema20Slope = self.ema20Slope = bt.talib.LINEARREG_SLOPE(self.ema20, timeperiod=2) * 100
-        # self.sma60Slope = bt.talib.LINEARREG_SLOPE(self.sma60, 1)
-        # self.ema120Slope = bt.talib.LINEARREG_SLOPE(self.ema120, 2)
 
         self.macd = bt.ind.MACDHisto(self.data, period_me1=20, period_me2=60, period_signal=9)
         self.l.macd = self.macd.macd
         self.l.macdsignal = self.macd.signal
         self.l.macdhist = self.macd.histo
-        # self.l.macdhistobool = bt.ind.CrossOver(self.macd.histo, 0)
         self.l.macdHistMoveRank = bt.ind.PercentRank(abs(bt.ind.UpMove(self.l.macdhist)), period=144)
 
         self.macdlong = bt.ind.MACDHisto(self.data, period_me1=20, period_me2=120, period_signal=9)
-        # self.macdlong = self.macdlong.macd
-        # self.macdlongsignal = self.macdlong.signal
-        # self.macdlonghist = self.macdlong.histo
-        # self.l.macdlonghistobool = bt.ind.CrossOver(self.macdlonghist,0)
 
-        # self.pctRank = PercentRankAbs(self.l.macdsignal, period=200)
         self.l.shortbiasrank = bt.ind.PercentRank(abs(self.l.macdsignal), period=144)
         self.l.longbiasrank = bt.ind.PercentRank(abs(self.macdlong.signal), period=144)
 
 
         self.lowestHist = bt.ind.Lowest(self.l.macdhist, period=144)
         self.lowestDiff = bt.ind.Lowest(self.l.macdsignal, period=144)
-        # self.macdhistSlope = bt.talib.LINEARREG_SLOPE(self.l.macdhist, timeperiod=2)
 
         self.pctATR = bt.ind.ATR(self.data)
         self.riskLevel = 0
@@ -312,7 +163,7 @@ class MACDBiasPositionManager(bt.Indicator):
 
         if self.data.datetime.date(0).isoformat() < '2010-04-17':
             return
-        if self.data.datetime.date(0).isoformat() == '2013-03-22':
+        if self.data.datetime.date(0).isoformat() == '2018-09-13':
             print("1")
         if self.data.datetime.date(0).isoformat() == '2013-02-02':
             pass
@@ -329,23 +180,6 @@ class MACDBiasPositionManager(bt.Indicator):
 
         self.l.riskLevel[0] = self.riskLevel
 
-
-
-
-
-
-        # self.l.pctAtrPrice[0] = self.pctATR[0] / self.ema20[0] * 100
-
-        # if len(self.l.holdState) > 1:
-        #     self.l.holdState[0] = self.l.holdState[-1]
-        # else:
-        #     self.l.holdState[0] = 0
-        #
-        # if self.l.PositionPercent[-1] == 0.99 and self.data.high[0] >  self.l.OrderPrice[-1]:
-        #     self.l.holdState[0] = 5
-        #
-        # if self.l.PositionPercent[-1] == 0 and self.data.low[0] < self.l.OrderPrice[-1]:
-        #     self.l.holdState[0] = 0
 
 
         '''
@@ -380,16 +214,18 @@ class MACDBiasPositionManager(bt.Indicator):
 
         else:
             '''
-            2020-11-1买入逻辑修改：
+            2021-05-2买入逻辑修改：
             增加：
             1.大幅乖离（短中、中长）之后，且ATR、乖离率未恢复到正常水平之前：
                 不进场
                 ----如果均线全部多头排列，且斜率全部向上，则进场
-            2.60日sma斜率大于0，且短、中、长期均线多`头排列，则进场
-            3.1、2的充分条件破线20日sma和ema
-            4.均线密集不买
+            -2.60日sma斜率大于0，且短、中、长期均线多`头排列，则进场
+            -2.20日ema和20日sma日破线并拐头
+            -3.1、2的充分条件破线20日sma和ema
+            3.空头大幅乖离时，20日ema和20日sma日破线并拐头入场
+            -4.均线密集不买
+            
             '''
-
 
             if self.riskLevel == 1:
                 pass
@@ -402,8 +238,8 @@ class MACDBiasPositionManager(bt.Indicator):
                 #     return
                 # if self.sma60[0] > self.sma60[-1] and self.sma20[0] > self.sma60[0] and self.sma20[0] > self.sma20[-1] and self.ema20[0] > self.ema20[-1] \
                 #         and self.sma60[0] > self.sma120[0]:
-                if self.sma20[0] > self.sma60[0] \
-                        and self.sma60[0] > self.sma120[0]:
+                if self.sma20[0] > self.sma20[-1] \
+                        and self.data.close[0] > self.ema20[0]:
                     self.l.OrderPrice[0] = max(self.ema20[0], self.data[-19])
                     self.l.PositionPercent[0] = 0.99
 

@@ -1,6 +1,5 @@
 import backtrader as bt
 
-from BackTraderTest.BackTraderFunc.Indicator.EntryMacdDivergence import MACDEMAEntryPoint
 
 
 class MacdDivergenceSt(bt.Strategy):
